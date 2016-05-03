@@ -1,0 +1,106 @@
+<h1 id='main_title'>Сервис создания библиографической ссылки для списка литературы</h1>
+<div id='main'>
+
+<%= form_tag('/proc', method: :post) do %><br>
+  <div id="fio" class="form-group">
+    <%= label_tag 'author[]', "ФИО" %>
+    <%= text_field_tag 'author[]', nil, class: 'form-control' %>
+    <!-- <a style="color:green;" onclick="return addField()" href="#">[+]</a> -->
+    <button id="addField" type="button" class="btn btn-info">+</button>
+  </div>
+
+
+  <!-- <div type="button" class="btn-primary">
+  <%= button_to "+", @article, remote: true %>
+  </div> -->
+
+  <div class="form-group">
+    <%= label_tag 'title', "Заголовок:" %>
+    <%= text_field_tag 'title', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'year', "Год издания:" %>
+    <%= text_field_tag 'year', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'publisher', "Издательство:" %>
+    <%= text_field_tag 'publisher', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'volume', "Объем (количество страниц):" %>
+    <%= text_field_tag 'volume', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'city', "Место издания (город):" %>
+    <%= text_field_tag 'city', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'edition_number', "Номер издания:" %>
+    <%= text_field_tag 'edition_number', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'number', "Номер выпуска:" %>
+    <%= text_field_tag 'number', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'position', "Место размещения статьи (страницы):" %>
+    <%= text_field_tag 'position', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'article_title', "Название статьи:" %>
+    <%= text_field_tag 'article_title', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'url', "Интернет-ресурс:" %>
+    <%= text_field_tag 'url', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'release_date', "Дата выпуска:" %>
+    <%= text_field_tag 'release_date', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'accessing_resource', "Дата обращения:" %>
+    <%= text_field_tag 'accessing_resource', nil, class: 'form-control' %><br>
+  </div>
+    <%= submit_tag 'Save' %>
+<% end %>
+</div>
+
+<!-- <script>
+var countOfFields = 1; // Текущее число полей
+var curFieldNameId = 1; // Уникальное значение для атрибута name
+var maxFieldLimit = 25; // Максимальное число возможных полей
+function deleteField(a) {
+  if (countOfFields > 1)
+  {
+ // Получаем доступ к ДИВу, содержащему поле
+ var contDiv = a.parentNode;
+ // Удаляем этот ДИВ из DOM-дерева
+ contDiv.parentNode.removeChild(contDiv);
+ // Уменьшаем значение текущего числа полей
+ countOfFields--;
+ }
+ // Возвращаем false, чтобы не было перехода по сслыке
+ return false;
+}
+function addField() {
+ // Проверяем, не достигло ли число полей максимума
+ if (countOfFields >= maxFieldLimit) {
+ alert("Число полей достигло своего максимума = " + maxFieldLimit);
+ return false;
+ }
+ // Увеличиваем текущее значение числа полей
+ countOfFields++;
+ // Увеличиваем ID
+ curFieldNameId++;
+ // Создаем элемент ДИВ
+ var div = document.createElement("div");
+ // Добавляем HTML-контент с пом. свойства innerHTML
+ div.innerHTML = "<%= label_tag 'author_sur', "ФИО" %><%= text_field_tag 'author_sur', nil, class: 'form-control' %><%= text_field_tag 'author_name', nil, class: 'form-control' %><%= text_field_tag 'author_last', nil, class: 'form-control' %><br>
+ <a style="color:green;" onclick="return addField()" href="#">[+]</a>";
+ // Добавляем новый узел в конец списка полей
+ document.getElementById("fio").appendChild(div);
+ // Возвращаем false, чтобы не было перехода по сслыке
+ return false;
+}
+</script> -->
