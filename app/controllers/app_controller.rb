@@ -5,7 +5,7 @@ class AppController < ApplicationController
   end
 
 def proc
-  puts "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#{params[:author][0][2]}"
+  puts ""
   puts params[:author].blank?
 
   @result = Hash.new
@@ -25,25 +25,54 @@ private
 
     unless params[:title].blank? || params[:author].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank? || params[:volume].blank?
 
-          @result[:single_author] = Hash.new
-          @result[:single_author][:type] = 'Книга'
+          # @result[:single_author] = Hash.new
+          # @result[:single_author][:type] = 'Книга'
+          #
+          # @result[:single_author][:fullname] = "#{params[:author].delete_if{ |e| e.blank? }.join(', ').capitalize}"
+          # @result[:single_author][:fullname] = "#{params[:author].map { |e| e.split } }"
+          #
+          # @result[:single_author][:title] = "#{params[:title]}. — "
+          # @result[:single_author][:title].chr.capitalize!
+          #
+          # @result[:single_author][:city] = "#{params[:city]}: "
+          # @result[:single_author][:city].chr.capitalize!
+          #
+          # @result[:single_author][:publisher] = "#{params[:publisher]}, "
+          # @result[:single_author][:publisher].capitalize!
+          #
+          # @result[:single_author][:year] = "#{params[:year]}. — "
+          #
+          # @result[:single_author][:volume] = "#{params[:volume]} c."
 
-          @result[:single_author][:fullname] = "#{params[:author].delete_if{ |e| e.blank? }.join(', ').capitalize}"
-          @result[:single_author][:fullname] = "#{params[:author].map { |e| e.split } }"
 
-          @result[:single_author][:title] = "#{params[:title]}. — "
-          @result[:single_author][:title].chr.capitalize!
+          @result[:single_author] = String.new
+          @result[:single_author] += "Книга"
 
-          @result[:single_author][:city] = "#{params[:city]}: "
-          @result[:single_author][:city].chr.capitalize!
+          authors = params[:author].delete_if{ |e| e.blank? }
+          authors.map! do |author|
+            author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
+            (Array(author[0]) << author[1..-1].map{ |e| e[0] }).flatten
+          end
+          authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
+          authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
+          authors[1..-1].each do |author|
+            authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+          end
 
-          @result[:single_author][:publisher] = "#{params[:publisher]}, "
-          @result[:single_author][:publisher].capitalize!
 
-          @result[:single_author][:year] = "#{params[:year]}. — "
+          @result[:single_author] += " #{authors_q} "
 
-          @result[:single_author][:volume] = "#{params[:volume]} c."
+          @result[:single_author] += "#{params[:title]}. / "
 
+          @result[:single_author] += "#{authors_r}"
+
+          @result[:single_author] += ". — #{params[:city]}: "
+
+          @result[:single_author] += "#{params[:publisher]}, "
+
+          @result[:single_author] += "#{params[:year]}. — "
+
+          @result[:single_author] += "#{params[:volume]} c."
     end
 
   end
@@ -93,17 +122,37 @@ private
                 author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
                 (Array(author[0]) << author[1..-1].map{ |e| e[0] }).flatten
               end
-              authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
-              authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
-              authors[1..-1].each do |author|
-                authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+              # p "?///////////"
+              # if (authors[0][2] == nil) then
+              #   p "name"
+              #   p authors[0][1]
+              #   p "lastname"
+                                # p authors[0][0]
+              # end
+              if (authors[0][2] == nil) then
+                authors_q = "#{authors[0][0]}, #{authors[0][1]}."
+                authors_r = "#{authors[0][1]}. #{authors[0][0]}"
+                authors[1..-1].each do |author|
+
+                  authors_r += ", #{author[1]}. #{author[0]}"
+
+                end
+              else
+
+                authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
+                authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
+                authors[1..-1].each do |author|
+
+                  authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+
+                end
               end
 
-              @result[:multi_authors] += "#{authors_q}"
+              @result[:multi_authors] += "#{authors_q} "
 
               @result[:multi_authors] += "#{params[:title]}. / "
 
-              @result[:multi_authors] += "#{authors_r}."
+              @result[:multi_authors] += "#{authors_r}"
 
               @result[:multi_authors] += ". — #{params[:city]}: "
 
@@ -119,30 +168,41 @@ private
 
   def book_article
 
-        unless params[:author_sur].blank? || params[:author_name].blank? || params[:author_last].blank? || params[:article_title].blank? || params[:title].blank? || params[:city].blank? ||  params[:year].blank? || params[:position].blank?
+        unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:city].blank? ||  params[:year].blank? || params[:position].blank?
 
-              @result[:book_article] = Hash.new
-              @result[:book_article][:type] = 'Статья из книги'
+              @result[:book_article] = String.new
+              @result[:book_article] += "Статья из книги"
 
-              @result[:book_article][:fullname] = "#{params[:author_sur].capitalize}, #{params[:author_name].capitalize.first}. "
-              @result[:book_article][:fullname] << "#{params[:author_last].capitalize.first}." unless params[:author_last].blank?
+              authors = params[:author].delete_if{ |e| e.blank? }
+              authors.map! do |author|
+                author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
+                (Array(author[0]) << author[1..-1].map{ |e| e[0] }).flatten
+              end
+              authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
+              authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
+              authors[1..-1].each do |author|
+                authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+              end
 
-              @result[:book_article][:article_title] = "#{params[:article_title]} / "
-              @result[:book_article][:article_title].chr.capitalize!
+              p  authors_q
+              p  authors_r.size
 
-              @result[:book_article][:fullname] = "#{params[:author_name].capitalize.first}. "
-              @result[:book_article][:fullname] << "#{params[:author_last].capitalize.first}. " unless params[:author_last].blank?
-              @result[:book_article][:fullname] << " #{params[:author_sur].capitalize} // "
+              @result[:book_article] += " #{authors_q}"
 
-              @result[:book_article][:title] = "#{params[:title]}. — "
-              @result[:book_article][:title].chr.capitalize!
+              @result[:book_article] += " #{params[:article_title]} / "
+              @result[:book_article].chr.capitalize!
 
-              @result[:book_article][:city] = "#{params[:city]}: "
-              @result[:book_article][:city].chr.capitalize!
+              @result[:multi_authors] += " #{authors_r} // "
 
-              @result[:book_article][:year] = "#{params[:year]}. — "
+              @result[:book_article] += "#{params[:title]}. — "
+              @result[:book_article].chr.capitalize!
 
-              @result[:book_article][:position] = "C. #{params[:position]}."
+              @result[:book_article] += "#{params[:city]}, "
+              @result[:book_article].chr.capitalize!
+
+              @result[:book_article] += "#{params[:year]}. — "
+
+              @result[:book_article] += "C. #{params[:position]}."
 
     # r[:edition_number] = "#{params[:edition_number]}"
 
@@ -151,29 +211,37 @@ private
 
   def magazines_article
 
-        unless params[:author_sur].blank? || params[:author_name].blank? || params[:author_last].blank? || params[:article_title].blank? || params[:title].blank? || params[:number].blank? ||  params[:year].blank? || params[:position].blank?
+        unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:number].blank? ||  params[:year].blank? || params[:position].blank?
 
-              @result[:magazines_article] = Hash.new
-              @result[:magazines_article][:type] = 'Статья из журнала'
+              @result[:magazines_article] = String.new
+              @result[:magazines_article] += "Статья из журнала"
 
-              @result[:magazines_article][:fullname] = "#{params[:author_sur].capitalize}, #{params[:author_name].capitalize.first}. "
-              @result[:magazines_article][:fullname] << "#{params[:author_last].capitalize.first}." unless params[:author_last].blank?
+              authors = params[:author].delete_if{ |e| e.blank? }
+              authors.map! do |author|
+                author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
+                (Array(author[0]) << author[1..-1].map{ |e| e[0] }).flatten
+              end
+              authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
+              authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
+              authors[1..-1].each do |author|
+                authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+              end
 
-              @result[:magazines_article][:article_title] = "#{params[:article_title]} / "
-              @result[:magazines_article][:article_title].chr.capitalize!
+              @result[:magazines_article] += " #{authors_q} "
 
-              @result[:magazines_article][:fullname] = "#{params[:author_name].capitalize.first}. "
-              @result[:magazines_article][:fullname] << "#{params[:author_last].capitalize.first}. " unless params[:author_last].blank?
-              @result[:magazines_article][:fullname] << " #{params[:author_sur].capitalize} // "
+              @result[:magazines_article] += "#{params[:article_title]} / "
+              @result[:magazines_article].chr.capitalize!
 
-              @result[:magazines_article][:title] = "#{params[:title]}. — "
-              @result[:magazines_article][:title].chr.capitalize!
+              @result[:magazines_article] += " #{authors_r} // "
 
-              @result[:magazines_article][:year] = "#{params[:year]}. — "
+              @result[:magazines_article] += "#{params[:title]}. — "
+              @result[:magazines_article].chr.capitalize!
 
-              @result[:magazines_article][:number] = "№ #{params[:number]}. — "
+              @result[:magazines_article] += "#{params[:year]}. — "
 
-              @result[:magazines_article][:position] = "C. #{params[:position]}."
+              @result[:magazines_article] += "№ #{params[:number]}. — "
+
+              @result[:magazines_article] += "C. #{params[:position]}."
 
     # r[:edition_number] = "#{params[:edition_number]}"
 
