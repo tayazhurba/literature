@@ -19,6 +19,18 @@
     <%= text_field_tag 'title', nil, class: 'form-control' %><br>
   </div>
   <div class="form-group">
+    <%= label_tag 'title_info', "Сведения, относящиеся к заглавию:" %>
+    <%= text_field_tag 'title_info', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'translator', "Составитель, редактор, переводчик и т.д.:" %>
+    <%= text_field_tag 'translator', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
+    <%= label_tag 'organizations', "Наименование учреждения, организации:" %>
+    <%= text_field_tag 'organizations', nil, class: 'form-control' %><br>
+  </div>
+  <div class="form-group">
     <%= label_tag 'year', "Год издания:" %>
     <%= text_field_tag 'year', nil, class: 'form-control' %><br>
   </div>
