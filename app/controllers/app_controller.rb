@@ -36,21 +36,31 @@ private
           if (authors.size <= 3) then
 
             if (authors[0][2] == nil) then
+              p "нет отчества у 1"
               authors_q = "#{authors[0][0]}, #{authors[0][1]}."
               authors_r = "#{authors[0][1]}. #{authors[0][0]}"
+
               authors[1..-1].each do |author|
-
-                authors_r += ", #{author[1]}. #{author[0]}"
-
+                if (author[2] == nil) then
+                  authors_r += ", #{author[1]}. #{author[0]}"
+                else
+                  p "абра"
+                  authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+                end
               end
-            else
-
+            end
+          
+            if (authors[0][2] != nil) then
+              p "есть отчество у 1"
               authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
               authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
+
               authors[1..-1].each do |author|
-
-                authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
-
+                if (author[2] != nil) then
+                  authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+                else
+                  authors_r += ", #{author[1]}. #{author[0]}"
+                end
               end
             end
 
@@ -66,6 +76,18 @@ private
             end
 
             @result[:single_author] += " / #{authors_r}"
+
+            if !(params[:translator].blank?) then
+                translator = params[:translator].split(/[ \.]/).delete_if{ |e| e.blank? }
+
+                if (translator[2] == nil) then
+                  translator_q = "#{translator[1]}. #{translator[0]}"
+                else
+                  translator_q = "#{translator[1]}. #{translator[2]}. #{translator[0]}"
+                end
+
+                @result[:single_author] += " ; под ред. #{translator_q}"
+            end
 
             if !(params[:organizations].blank?) then
               @result[:single_author] += " ; #{params[:organizations]}"
@@ -129,6 +151,18 @@ private
               end
 
               @result[:multi_authors] += " / #{authors_q} [и др.]"
+
+              if !(params[:translator].blank?) then
+                  translator = params[:translator].split(/[ \.]/).delete_if{ |e| e.blank? }
+
+                  if (translator[2] == nil) then
+                    translator_q = "#{translator[1]}. #{translator[0]}"
+                  else
+                    translator_q = "#{translator[1]}. #{translator[2]}. #{translator[0]}"
+                  end
+
+                  @result[:multi_authors] += " ; под ред. #{translator_q}"
+              end
 
               if !(params[:organizations].blank?) then
                 @result[:multi_authors] += " ; #{params[:organizations]}"
