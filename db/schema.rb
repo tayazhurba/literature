@@ -11,13 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160404020104) do
+ActiveRecord::Schema.define(version: 20160521081130) do
 
   create_table "autors", force: true do |t|
     t.integer  "source_id"
     t.string   "author_sur"
     t.string   "author_name"
     t.string   "author_last"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "records", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "rec_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -48,6 +55,10 @@ ActiveRecord::Schema.define(version: 20160404020104) do
   end
 
   create_table "users", force: true do |t|
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "email"
+    t.string   "password"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

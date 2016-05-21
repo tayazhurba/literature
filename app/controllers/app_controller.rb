@@ -4,28 +4,82 @@ class AppController < ApplicationController
 
   end
 
-def proc
-  puts ""
-  puts params[:author].blank?
+  def check
+    require 'matrix'
 
-  @result = Hash.new
-  single_author
-  multi_authors
-  book_article
-  magazines_article
-  papers_article
-  internet_resourse
+    def field_check(p)
+      return (params[:author].delete_if{ |e| e.blank? }.size > 0 ? 1 : 0).to_i if p == :author
+      return (params[:author].delete_if{ |e| e.blank? }.size > 3 ? 1 : 0).to_i if p == :author_many
+      (params[p].blank? ? 0 : 1).to_i
+    end
 
-  render :result
-end
+    vectors = [
+      Vector[1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], # 1 to 3 autors
+      Vector[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      Vector[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      Vector[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ]
+
+    inner_array = []
+
+    inner_array << field_check(:author)
+    inner_array << field_check(:author_many)  #fake many autors
+    inner_array << field_check(:title)
+    inner_array << field_check(:title_info)
+    inner_array << field_check(:editor)
+    inner_array << field_check(:compiler)
+    inner_array << field_check(:organizations)
+    inner_array << field_check(:year)
+    inner_array << field_check(:publisher)
+    inner_array << field_check(:volume)
+    inner_array << field_check(:volume_tome)
+    inner_array << field_check(:city)
+    inner_array << field_check(:edition_number)
+    inner_array << field_check(:number)
+    inner_array << field_check(:position)
+    inner_array << field_check(:article_title)
+    inner_array << field_check(:url)
+    inner_array << field_check(:release_date)
+    inner_array << field_check(:accessing_resource)
+
+    inner_vector = Vector.elements(inner_array)
+
+    puts '---'
+    puts inner_vector
+    puts '---'
+    puts  vectors.sort_by{ |e| (inner_vector - e).to_a.delete_if{ |x| x != -1 }.size }
+
+    render text: vectors.sort_by{ |e| (inner_vector - e).to_a.delete_if{ |x| x != -1 }.size }
+
+    # render text: inner_vector
+
+
+
+
+  end
+
+  def proc
+    puts ""
+    puts params[:author].blank?
+
+    @result = Hash.new
+    single_author
+    multi_authors
+    digest
+    tome
+    book_article
+    magazines_article
+    papers_article
+    internet_resourse
+
+    render :result
+  end
 
 private
 
   def single_author
 
-    unless params[:title].blank? || params[:author].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank? || params[:volume].blank?
-
-
+    unless params[:author].blank? || params[:title].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank? || params[:volume].blank?
 
           authors = params[:author].delete_if{ |e| e.blank? }
           authors.map! do |author|
@@ -36,25 +90,20 @@ private
           if (authors.size <= 3) then
 
             if (authors[0][2] == nil) then
-              p "нет отчества у 1"
               authors_q = "#{authors[0][0]}, #{authors[0][1]}."
               authors_r = "#{authors[0][1]}. #{authors[0][0]}"
-
               authors[1..-1].each do |author|
                 if (author[2] == nil) then
                   authors_r += ", #{author[1]}. #{author[0]}"
                 else
-                  p "абра"
                   authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
                 end
               end
             end
-          
+
             if (authors[0][2] != nil) then
-              p "есть отчество у 1"
               authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
               authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
-
               authors[1..-1].each do |author|
                 if (author[2] != nil) then
                   authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
@@ -77,16 +126,16 @@ private
 
             @result[:single_author] += " / #{authors_r}"
 
-            if !(params[:translator].blank?) then
-                translator = params[:translator].split(/[ \.]/).delete_if{ |e| e.blank? }
+            if !(params[:editor].blank?) then
+                editor = params[:editor].split(/[ \.]/).delete_if{ |e| e.blank? }
 
-                if (translator[2] == nil) then
-                  translator_q = "#{translator[1]}. #{translator[0]}"
+                if (editor[2] == nil) then
+                  editor_q = "#{editor[1]}. #{editor[0]}"
                 else
-                  translator_q = "#{translator[1]}. #{translator[2]}. #{translator[0]}"
+                  editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                 end
 
-                @result[:single_author] += " ; под ред. #{translator_q}"
+                @result[:single_author] += " ; ред. #{editor_q}"
             end
 
             if !(params[:organizations].blank?) then
@@ -126,18 +175,13 @@ private
                 authors_q = "#{authors[0][0]}, #{authors[0][1]}."
                 authors_r = "#{authors[0][1]}. #{authors[0][0]}"
                 authors[1..-1].each do |author|
-
                   authors_r += ", #{author[1]}. #{author[0]}"
-
                 end
               else
-
                 authors_q = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
                 authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
                 authors[1..-1].each do |author|
-
                   authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
-
                 end
               end
 
@@ -152,16 +196,16 @@ private
 
               @result[:multi_authors] += " / #{authors_q} [и др.]"
 
-              if !(params[:translator].blank?) then
-                  translator = params[:translator].split(/[ \.]/).delete_if{ |e| e.blank? }
+              if !(params[:editor].blank?) then
+                  editor = params[:editor].split(/[ \.]/).delete_if{ |e| e.blank? }
 
-                  if (translator[2] == nil) then
-                    translator_q = "#{translator[1]}. #{translator[0]}"
+                  if (editor[2] == nil) then
+                    editor_q = "#{editor[1]}. #{editor[0]}"
                   else
-                    translator_q = "#{translator[1]}. #{translator[2]}. #{translator[0]}"
+                    editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                   end
 
-                  @result[:multi_authors] += " ; под ред. #{translator_q}"
+                  @result[:multi_authors] += " ; ред. #{editor_q}"
               end
 
               if !(params[:organizations].blank?) then
@@ -185,6 +229,147 @@ private
     end
 
   end
+
+  def digest
+        unless params[:title].blank? || params[:city].blank? || params[:publisher].blank? ||  params[:year].blank? || params[:volume].blank?
+
+                  @result[:digest] = String.new
+                  @result[:digest] += "Сборник статей"
+
+                  @result[:digest] += " #{params[:title]}"
+
+                  if !(params[:title_info].blank?) then
+                    @result[:digest] += " : #{params[:title_info]}"
+                  end
+
+                  if !(params[:organizations].blank?) then
+                    @result[:digest] += " / #{params[:organizations]}"
+                  end
+
+                  if !(params[:compiler].blank?) then
+                      compiler = params[:compiler].split(/[ \.]/).delete_if{ |e| e.blank? }
+
+                      if (compiler[2] == nil) then
+                        compiler_q = "#{compiler[1]}. #{compiler[0]}"
+                      else
+                        compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
+                      end
+
+                      @result[:digest] += " ; сост.: #{compiler_q}"
+                  end
+
+                  if !(params[:editor].blank?) then
+                      editor = params[:editor].split(/[ \.]/).delete_if{ |e| e.blank? }
+
+                      if (editor[2] == nil) then
+                        editor_q = "#{editor[1]}. #{editor[0]}"
+                      else
+                        editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
+                      end
+
+                      @result[:digest] += " ; ред. #{editor_q}"
+                  end
+
+                  @result[:digest] += ". — #{params[:city]}"
+
+                  @result[:digest] += " : #{params[:publisher]}"
+
+                  @result[:digest] += ", #{params[:year]}"
+
+                  @result[:digest] += ". — #{params[:volume]} с."
+
+        end
+  end
+
+  def tome
+      unless params[:title].blank? || params[:volume_tome].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank?
+
+                  @result[:tome] = String.new
+                  @result[:tome] += "Многотомные издания"
+
+                  authors = params[:author].delete_if{ |e| e.blank? }
+                  authors.map! do |author|
+                    author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
+                    (Array(author[0]) << author[1..-1].map{ |e| e[0] }).flatten
+                  end
+
+                  if !(params[:author].blank?) then
+
+                      if (authors[0][2] == nil) then
+                        authors_q = "#{authors[0][0]}, #{authors[0][1]}."
+                        authors_r = "#{authors[0][1]}. #{authors[0][0]}"
+                        authors[1..-1].each do |author|
+                          if (author[2] == nil) then
+                            authors_r += ", #{author[1]}. #{author[0]}"
+                          else
+                            authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+                          end
+                        end
+                      end
+
+                      if (authors[0][2] != nil) then
+                        authors_q = "#{authors[0][0]}, #{authors[0][1]}. #{authors[0][2]}."
+                        authors_r = "#{authors[0][1]}. #{authors[0][2]}. #{authors[0][0]}"
+                        authors[1..-1].each do |author|
+                          if (author[2] != nil) then
+                            authors_r += ", #{author[1]}. #{author[2]}. #{author[0]}"
+                          else
+                            authors_r += ", #{author[1]}. #{author[0]}"
+                          end
+                        end
+                      end
+                      @result[:tome] += " #{authors_q}"
+                  end
+
+                  @result[:tome] += " #{params[:title]}"
+
+                  @result[:tome] += " : в #{params[:volume_tome]} т."
+
+                  if !(params[:author].blank?) then
+                      @result[:tome] += " / #{authors_r}"
+                  end
+
+                  if !(params[:compiler].blank?) then
+                      compiler = params[:compiler].split(/[ \.]/).delete_if{ |e| e.blank? }
+
+                      if (compiler[2] == nil) then
+                        compiler_q = "#{compiler[1]}. #{compiler[0]}"
+                      else
+                        compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
+                      end
+
+                      @result[:tome] += " ; сост.: #{compiler_q}"
+                  end
+
+                  if !(params[:editor].blank?) then
+                      editor = params[:editor].split(/[ \.]/).delete_if{ |e| e.blank? }
+
+                      if (editor[2] == nil) then
+                        editor_q = "#{editor[1]}. #{editor[0]}"
+                      else
+                        editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
+                      end
+
+                      @result[:tome] += " ; ред. #{editor_q}"
+                  end
+
+                  if !(params[:edition_number].blank?) then
+                    @result[:tome] += ". — #{params[:edition_number]}-е изд"
+                  end
+
+                  @result[:tome] += ". — #{params[:city]}"
+
+                  @result[:tome] += " : #{params[:publisher]}"
+
+                  @result[:tome] += ", #{params[:year]}"
+
+                  @result[:tome] += ". — #{params[:volume_tome]} т."
+
+        # r[:edition_number] = "#{params[:edition_number]}"
+
+        end
+      end
+
 
   def book_article
 

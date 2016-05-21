@@ -11,9 +11,14 @@
     </div>
   <% end %>
   <div>
-    
+
   </div>
   <div class="actions">
+    <%= f.text_field :first_name, placeholder: 'Имя' %>
+    <%= f.text_field :last_name, placeholder: 'Фамилия' %>
+    <%= f.email_field :email, placeholder: 'email' %>
+    <%= f.password_field :password, placeholder: 'Пароль' %>
+    
     <%= f.submit %>
   </div>
 <% end %>
