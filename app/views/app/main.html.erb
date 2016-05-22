@@ -1,87 +1,29 @@
-<h1 id='main_title'>Сервис создания библиографической ссылки для списка литературы</h1>
+<h1 id='main_title'>Сервис библиографических описаний</h1>
 <div id='main'>
 
-<%= form_tag('/proc', method: :post) do %><br>
-  <div id="fio" class="form-group">
-    <%= label_tag 'author[]', "ФИО" %>
-    <%= text_field_tag 'author[]', nil, class: 'form-control' %>
-    <!-- <a style="color:green;" onclick="return addField()" href="#">[+]</a> -->
-    <button id="addField" type="button" class="btn btn-info">+</button>
-  </div>
+  <button id='create_button' onclick="generateAuthor()">Автор</button>
+  <button id='create_button' onclick="generateTitle()">Заголовок</button>
+
+  <p>
+    <a id="sentence" onclick="generateFields()">Вы хотите создать ссылку на книгу с одним автором?</a>
+    <input id="sentence_type" type="hidden" value="booboobobo"></input>
+  </p>
 
 
-  <!-- <div type="button" class="btn-primary">
-  <%= button_to "+", @article, remote: true %>
-  </div> -->
+  <div id="mainform">
+  </div>
 
-  <div class="form-group">
-    <%= label_tag 'title', "Заголовок:" %>
-    <%= text_field_tag 'title', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'title_info', "Сведения, относящиеся к заглавию:" %>
-    <%= text_field_tag 'title_info', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'editor', "Редактор:" %>
-    <%= text_field_tag 'editor', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'compiler', "Составитель:" %>
-    <%= text_field_tag 'compiler', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'organizations', "Наименование учреждения:" %>
-    <%= text_field_tag 'organizations', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'year', "Год издания:" %>
-    <%= text_field_tag 'year', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'publisher', "Издательство:" %>
-    <%= text_field_tag 'publisher', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'volume', "Количество страниц:" %>
-    <%= text_field_tag 'volume', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'volume_tome', "Количество томов:" %>
-    <%= text_field_tag 'volume_tome', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'city', "Место издания (город):" %>
-    <%= text_field_tag 'city', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'edition_number', "Номер издания:" %>
-    <%= text_field_tag 'edition_number', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'number', "Номер выпуска:" %>
-    <%= text_field_tag 'number', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'position', "Место размещения статьи (страницы):" %>
-    <%= text_field_tag 'position', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'article_title', "Название статьи:" %>
-    <%= text_field_tag 'article_title', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'url', "Интернет-ресурс:" %>
-    <%= text_field_tag 'url', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'release_date', "Дата выпуска:" %>
-    <%= text_field_tag 'release_date', nil, class: 'form-control' %><br>
-  </div>
-  <div class="form-group">
-    <%= label_tag 'accessing_resource', "Дата обращения:" %>
-    <%= text_field_tag 'accessing_resource', nil, class: 'form-control' %><br>
-  </div>
-    <%= submit_tag 'Save' %>
-<% end %>
+  <button id='check' onclick="check()">Чекнуть</button>
+
+</div>
+
+<div class="dropdown">
+  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown trigger
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dLabel">
+    <li>wdwd</li>
+    <li>wdwd2</li>
+  </ul>
 </div>
