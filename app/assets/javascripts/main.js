@@ -26,57 +26,57 @@ function check(fields) {
   }
 
   console.log(data);
-  // var request = $.ajax({
-  //   url: "/proc",
-  //   method: "POST",
-  //   data: data
-  // });
-  //
-  // request.done(function( msg ) {
-  //   sentence_type.val(msg)
-  //   switch ( msg ) {
-  //     case 'book_author_1to3':
-  //         sentence.text('Вы хотите создать ссылку для книги с 1-3 акторами?');
-  //       break;
-  //     case 'book_author_from4':
-  //         sentence.text('Вы хотите создать ссылку для книги с четырьмя и более авторами?');
-  //       break;
-  //     case 'digest':
-  //         sentence.text('Вы хотите создать ссылку для сборника?');
-  //       break;
-  //     case 'tome':
-  //         sentence.text('Вы хотите создать ссылку для многотомника?');
-  //       break;
-  //     case 'tome_single':
-  //         sentence.text('Вы хотите создать ссылку для отдльного тома многотомного издания?');
-  //       break;
-  //     case 'book_article_1to3':
-  //         sentence.text('Вы хотите создать ссылку для статьи из книги с 1-3 авторами?');
-  //       break;
-  //     case 'book_article_from4':
-  //         sentence.text('Вы хотите создать ссылку для статьи из книги с четырьмя и более авторами?');
-  //       break;
-  //     case 'digest_article':
-  //         sentence.text('Вы хотите создать ссылку для статьи из сборника?');
-  //       break;
-  //     case 'magazines_article':
-  //         sentence.text('Вы хотите создать ссылку для статьи из журнала?');
-  //       break;
-  //     case 'papers_article':
-  //         sentence.text('Вы хотите создать ссылку для статьи из газеты?');
-  //       break;
-  //     case 'internet_resourse':
-  //         sentence.text('Вы хотите создать ссылку для интернет ресурса?');
-  //       break;
-  //     default:
-  //       alert('default')
-  //   }
+  var request = $.ajax({
+    url: "/proc",
+    method: "POST",
+    data: data
+  });
 
-  // });
+  request.done(function( msg ) {
+    sentence_type.val(msg)
+    switch ( msg ) {
+      case 'book_author_1to3':
+          sentence.text('Вы хотите создать ссылку для книги с 1-3 акторами?');
+        break;
+      case 'book_author_from4':
+          sentence.text('Вы хотите создать ссылку для книги с четырьмя и более авторами?');
+        break;
+      case 'digest':
+          sentence.text('Вы хотите создать ссылку для сборника?');
+        break;
+      case 'tome':
+          sentence.text('Вы хотите создать ссылку для многотомника?');
+        break;
+      case 'tome_single':
+          sentence.text('Вы хотите создать ссылку для отдльного тома многотомного издания?');
+        break;
+      case 'book_article_1to3':
+          sentence.text('Вы хотите создать ссылку для статьи из книги с 1-3 авторами?');
+        break;
+      case 'book_article_from4':
+          sentence.text('Вы хотите создать ссылку для статьи из книги с четырьмя и более авторами?');
+        break;
+      case 'digest_article':
+          sentence.text('Вы хотите создать ссылку для статьи из сборника?');
+        break;
+      case 'magazines_article':
+          sentence.text('Вы хотите создать ссылку для статьи из журнала?');
+        break;
+      case 'papers_article':
+          sentence.text('Вы хотите создать ссылку для статьи из газеты?');
+        break;
+      case 'internet_resourse':
+          sentence.text('Вы хотите создать ссылку для интернет ресурса?');
+        break;
+      default:
+        alert('default')
+    }
 
-  // request.fail(function( jqXHR, textStatus ) {
-    // alert( "Request failed: " + textStatus );
-  // });
+  });
+
+  request.fail(function( jqXHR, textStatus ) {
+    alert( "Request failed: " + textStatus );
+  });
 }
 
 function generateFields() {
