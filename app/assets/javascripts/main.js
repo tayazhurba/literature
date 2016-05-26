@@ -1,65 +1,146 @@
-function check() {
-  var sentence = $( "#sentence" )
-  var sentence_type = $( "#sentence_type" )
+var myFields = [];
+$(document).ready(function() {
 
-  var request = $.ajax({
-    url: "/proc",
-    method: "POST",
-    data: {
-      "author[]" : "author",
-      "title" : "title"
+
+  $('.add-field').click(function() {
+    var id = $(this).attr('id');
+    if (fields[id]) {
+      var input = fields[id]();
+      $('#mainform').append(input);
+      myFields.push(input);
     }
-  });
+  })
 
-  request.done(function( msg ) {
-    sentence_type.val(msg)
-    switch ( msg ) {
-      case 'book_author_1to3':
-          sentence.text('Вы хотите создать ссылку для книги с 1-3 акторами?');
-        break;
-      case 'book_author_from4':
-          sentence.text('Вы хотите создать ссылку для книги с четырьмя и более авторами?');
-        break;
-      case 'digest':
-          sentence.text('Вы хотите создать ссылку для сборника?');
-        break;
-      case 'tome':
-          sentence.text('Вы хотите создать ссылку для многотомника?');
-        break;
-      case 'tome_single':
-          sentence.text('Вы хотите создать ссылку для отдльного тома многотомного издания?');
-        break;
-      case 'book_article_1to3':
-          sentence.text('Вы хотите создать ссылку для статьи из книги с 1-3 авторами?');
-        break;
-      case 'book_article_from4':
-          sentence.text('Вы хотите создать ссылку для статьи из книги с четырьмя и более авторами?');
-        break;
-      case 'digest_article':
-          sentence.text('Вы хотите создать ссылку для статьи из сборника?');
-        break;
-      case 'magazines_article':
-          sentence.text('Вы хотите создать ссылку для статьи из журнала?');
-        break;
-      case 'papers_article':
-          sentence.text('Вы хотите создать ссылку для статьи из газеты?');
-        break;
-      case 'internet_resourse':
-          sentence.text('Вы хотите создать ссылку для интернет ресурса?');
-        break;
-      default:
-        alert('default')
-    }
+  $('#check').click(function() {
+    check(myFields);
+  })
+})
 
-  });
+function check(fields) {
+  var sentence = $( "#sentence" );
+  var sentence_type = $( "#sentence_type" );
+  var data = {};
 
-  request.fail(function( jqXHR, textStatus ) {
-    alert( "Request failed: " + textStatus );
-  });
+  for (var i=0; i<fields.length; i++) {
+    data[fields[i].attr('name')] = fields[i].val();
+  }
+
+  console.log(data);
+  // var request = $.ajax({
+  //   url: "/proc",
+  //   method: "POST",
+  //   data: data
+  // });
+  //
+  // request.done(function( msg ) {
+  //   sentence_type.val(msg)
+  //   switch ( msg ) {
+  //     case 'book_author_1to3':
+  //         sentence.text('Вы хотите создать ссылку для книги с 1-3 акторами?');
+  //       break;
+  //     case 'book_author_from4':
+  //         sentence.text('Вы хотите создать ссылку для книги с четырьмя и более авторами?');
+  //       break;
+  //     case 'digest':
+  //         sentence.text('Вы хотите создать ссылку для сборника?');
+  //       break;
+  //     case 'tome':
+  //         sentence.text('Вы хотите создать ссылку для многотомника?');
+  //       break;
+  //     case 'tome_single':
+  //         sentence.text('Вы хотите создать ссылку для отдльного тома многотомного издания?');
+  //       break;
+  //     case 'book_article_1to3':
+  //         sentence.text('Вы хотите создать ссылку для статьи из книги с 1-3 авторами?');
+  //       break;
+  //     case 'book_article_from4':
+  //         sentence.text('Вы хотите создать ссылку для статьи из книги с четырьмя и более авторами?');
+  //       break;
+  //     case 'digest_article':
+  //         sentence.text('Вы хотите создать ссылку для статьи из сборника?');
+  //       break;
+  //     case 'magazines_article':
+  //         sentence.text('Вы хотите создать ссылку для статьи из журнала?');
+  //       break;
+  //     case 'papers_article':
+  //         sentence.text('Вы хотите создать ссылку для статьи из газеты?');
+  //       break;
+  //     case 'internet_resourse':
+  //         sentence.text('Вы хотите создать ссылку для интернет ресурса?');
+  //       break;
+  //     default:
+  //       alert('default')
+  //   }
+
+  // });
+
+  // request.fail(function( jqXHR, textStatus ) {
+    // alert( "Request failed: " + textStatus );
+  // });
 }
 
 function generateFields() {
 
+}
+
+var fields = {
+  'add_author': function() {
+    return $('<input class="form-control" id="author" name="author[]" type="text" placeholder="Автор">');
+  },
+  'add_title': function() {
+    return $('<input class="form-control" id="title" name="title" type="text" placeholder="Заголовок">');
+  },
+  'add_title_info': function() {
+    return $('<input class="form-control" id="title_info" name="title_info" type="text" placeholder="Сведения, относящиеся к заглавию">');
+  },
+  'add_editor': function() {
+    return $('<input class="form-control" id="editor" name="editor" type="text" placeholder="Редактор">');
+  },
+  'add_compiler': function() {
+    return $('<input class="form-control" id="compiler" name="compiler" type="text" placeholder="Составитель">');
+  },
+  'add_organizations': function() {
+    return $('<input class="form-control" id="organizations" name="organizations" type="text" placeholder="Наименование учреждения">');
+  },
+  'add_year': function() {
+    return $('<input class="form-control" id="year" name="year" type="text" placeholder="Год издания">');
+  },
+  'add_publisher': function() {
+    return $('<input class="form-control" id="publisher" name="publisher" type="text" placeholder="Издательство">');
+  },
+  'add_volume': function() {
+    return $('<input class="form-control" id="volume" name="volume" type="text" placeholder="Количество страниц">');
+  },
+  'add_volume_tome': function() {
+    return $('<input class="form-control" id="volume_tome" name="volume_tome" type="text" placeholder="Количество томов">');
+  },
+  'add_tome_number': function() {
+    return $('<input class="form-control" id="tome_number" name="tome_number" type="text" placeholder="Номер тома">');
+  },
+  'add_city': function() {
+    return $('<input class="form-control" id="city" name="city" type="text" placeholder="Место издания (город)">');
+  },
+  'add_edition_number': function() {
+    return $('<input class="form-control" id="edition_number" name="edition_number" type="text" placeholder="Номер издания">');
+  },
+  'add_number': function() {
+    return $('<input class="form-control" id="number" name="number" type="text" placeholder="Номер выпуска">');
+  },
+  'add_position': function() {
+    return $('<input class="form-control" id="position" name="position" type="text" placeholder="Место размещения статьи (страницы)">');
+  },
+  'add_article_title': function() {
+    return $('<input class="form-control" id="article_title" name="article_title" type="text" placeholder="Название статьи">');
+  },
+  'add_url': function() {
+    return $('<input class="form-control" id="url" name="url" type="text" placeholder="Интернет-ресурс">');
+  },
+  'add_release_date': function() {
+    return $('<input class="form-control" id="release_date" name="release_date" type="text" placeholder="Дата выпуска">');
+  },
+  'add_accessing_resource': function() {
+    return $('<input class="form-control" id="accessing_resource" name="accessing_resource" type="text" placeholder="Дата обращения">');
+  }
 }
 
 function generateAuthor() {
