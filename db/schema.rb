@@ -22,9 +22,17 @@ ActiveRecord::Schema.define(version: 20160521081130) do
     t.datetime "updated_at"
   end
 
+  create_table "lists", force: true do |t|
+    t.integer  "users_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "records", force: true do |t|
-    t.integer  "user_id"
+    t.integer  "list_id"
     t.integer  "rec_type"
+    t.string   "record"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -7,19 +7,33 @@ class AppController < ApplicationController
     require 'matrix'
 
     def field_check(p)
-      return (params[:author].delete_if{ |e| e.blank? }.size > 0 ? 1 : 0).to_i if p == :author
-      return (params[:author].delete_if{ |e| e.blank? }.size > 3 ? 1 : 0).to_i if p == :author_many
+      if p == :author
+        if params[:author].nil?
+          return 0.to_i
+        else
+          params[:author].delete_if{ |e| e.blank? }.size > 0 ? 1 : 0
+        end
+      end
+
+      if p == :author_many
+        if params[:author].nil?
+          return 0.to_i
+        else
+          params[:author].delete_if{ |e| e.blank? }.size > 3 ? 1 : 0
+        end
+      end
+
       (params[p].blank? ? 0 : 1).to_i
     end
 
     vectors = {
-      autors_1to3:        Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
-      author_form4:       Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
-      digest:             Vector[0,1,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
+      book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
+      book_author_from4:  Vector[1,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
+      digest:             Vector[1,1,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
       tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
       tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
       book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
-      book_article_from4: Vector[0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
+      book_article_from4: Vector[1,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
       digest_article:     Vector[0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0], # digest_article
       magazines_article:  Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0], # magazines_article
       papers_article:     Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0], # papers_article
@@ -74,37 +88,54 @@ class AppController < ApplicationController
     # inner_vector = Vector[0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 
     puts '---'
-    puts inner_vector
-    puts '---'
-    puts vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
+    # puts inner_vector
+    # puts '---'
+    # puts vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
 
-    render text: vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first[0]
+    puts '############################'
+    puts
 
-  end
+    candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
+    result = nil
+    case candidate[0]
+    when :book_author_1to3
+        result = book_author_1to3
+      when 'book_author_from4'
+        result = book_author_from4
+      when 'digest'
+        result = digest
+      when 'tome'
+        result = tome
+      when 'tome_single'
+        result = tome_single
+      when 'book_article_1to3'
+        result = book_article_1to3
+      when 'book_article_from4'
+        result = book_article_from4
+      when 'magazines_article'
+        result = magazines_article
+      when 'papers_article'
+        result = papers_article
+      when :internet_resourse
+        result = internet_resourse
+      else
+        p candidate[0]
+      end
 
-  def proc
-    puts ""
-    puts params[:author].blank?
+    response = {
+      type:   candidate[0],
+      fields: candidate[1].to_a,
+      result: result
+     }
 
-    @result = Hash.new
-    book_author_1to3
-    book_author_from4
-    digest
-    tome
-    tome_single
-    book_article_1to3
-    book_article_from4
-    magazines_article
-    papers_article
-    internet_resourse
+    render json: response
 
-    render :result
   end
 
 private
 
   def book_author_1to3
-
+    result = String.new
     unless params[:author].blank? || params[:title].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank? || params[:volume].blank?
 
           authors = params[:author].delete_if{ |e| e.blank? }
@@ -139,18 +170,18 @@ private
               end
             end
 
-            @result[:book_author_1to3] = String.new
-            @result[:book_author_1to3] += "Книга"
+            result = String.new
+            result += "Книга"
 
-            @result[:book_author_1to3] += " #{authors_q} "
+            result += " #{authors_q} "
 
-            @result[:book_author_1to3] += "#{params[:title]}"
+            result += "#{params[:title]}"
 
             if !(params[:title_info].blank?) then
-              @result[:book_author_1to3] += " : #{params[:title_info]}"
+              result += " : #{params[:title_info]}"
             end
 
-            @result[:book_author_1to3] += " / #{authors_r}"
+            result += " / #{authors_r}"
 
             if !(params[:editor].blank?) then
                 editor = params[:editor].split(/[ \.]/).delete_if{ |e| e.blank? }
@@ -161,24 +192,24 @@ private
                   editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                 end
 
-                @result[:book_author_1to3] += " ; ред. #{editor_q}"
+                result += " ; ред. #{editor_q}"
             end
 
             if !(params[:organizations].blank?) then
-              @result[:book_author_1to3] += " ; #{params[:organizations]}"
+              result += " ; #{params[:organizations]}"
             end
 
             if !(params[:edition_number].blank?) then
-              @result[:book_author_1to3] += ". — #{params[:edition_number]}"
+              result += ". — #{params[:edition_number]}"
             end
 
-            @result[:book_author_1to3] += ". — #{params[:city]} : "
+            result += ". — #{params[:city]} : "
 
-            @result[:book_author_1to3] += "#{params[:publisher]}, "
+            result += "#{params[:publisher]}, "
 
-            @result[:book_author_1to3] += "#{params[:year]}. — "
+            result += "#{params[:year]}. — "
 
-            @result[:book_author_1to3] += "#{params[:volume]} c."
+            result += "#{params[:volume]} c."
 
           end
     end
