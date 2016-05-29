@@ -11,7 +11,7 @@ class AppController < ApplicationController
         if params[:author].nil?
           return 0.to_i
         else
-          params[:author].delete_if{ |e| e.blank? }.size > 0 ? 1 : 0
+          return params[:author].delete_if{ |e| e.blank? }.size < 4 ? 1 : 0
         end
       end
 
@@ -19,21 +19,23 @@ class AppController < ApplicationController
         if params[:author].nil?
           return 0.to_i
         else
-          params[:author].delete_if{ |e| e.blank? }.size > 3 ? 1 : 0
+          return params[:author].delete_if{ |e| e.blank? }.size > 3 ? 1 : 0
+          # p params[:author].delete_if{ |e| e.blank? }.size > 3 ? 1 : 0
+          # p "author_many"
         end
       end
-
       (params[p].blank? ? 0 : 1).to_i
+      # p (params[p].blank? ? 0 : 1).to_i
     end
 
     vectors = {
       book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
-      book_author_from4:  Vector[1,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
-      digest:             Vector[1,1,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
+      book_author_from4:  Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
+      digest:             Vector[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
       tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
       tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
       book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
-      book_article_from4: Vector[1,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
+      book_article_from4: Vector[0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
       digest_article:     Vector[0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0], # digest_article
       magazines_article:  Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0], # magazines_article
       papers_article:     Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0], # papers_article
@@ -93,28 +95,29 @@ class AppController < ApplicationController
     # puts vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
 
     puts '############################'
-    puts
-
+    puts inner_vector
+    p "condidate"
+    p candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
     candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
     result = nil
     case candidate[0]
-    when :book_author_1to3
+      when :book_author_1to3
         result = book_author_1to3
-      when 'book_author_from4'
+      when :book_author_from4
         result = book_author_from4
-      when 'digest'
+      when :digest
         result = digest
-      when 'tome'
+      when :tome
         result = tome
-      when 'tome_single'
+      when :tome_single
         result = tome_single
-      when 'book_article_1to3'
+      when :book_article_1to3
         result = book_article_1to3
-      when 'book_article_from4'
+      when :book_article_from4
         result = book_article_from4
-      when 'magazines_article'
+      when :magazines_article
         result = magazines_article
-      when 'papers_article'
+      when :papers_article
         result = papers_article
       when :internet_resourse
         result = internet_resourse
@@ -135,7 +138,6 @@ class AppController < ApplicationController
 private
 
   def book_author_1to3
-    result = String.new
     unless params[:author].blank? || params[:title].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank? || params[:volume].blank?
 
           authors = params[:author].delete_if{ |e| e.blank? }
@@ -242,16 +244,16 @@ private
                 end
               end
 
-              @result[:book_author_from4] = String.new
-              @result[:book_author_from4] += "Несколько авторов "
+              result = String.new
+              result += "Несколько авторов "
 
-              @result[:book_author_from4] += "#{params[:title]} "
+              result += "#{params[:title]} "
 
               if !(params[:title_info].blank?) then
-                @result[:book_author_from4] += " : #{params[:title_info]}"
+                result += " : #{params[:title_info]}"
               end
 
-              @result[:book_author_from4] += " / #{authors_q} [и др.]"
+              result += " / #{authors_q} [и др.]"
 
               if !(params[:editor].blank?) then
                   editor = params[:editor].split(/[ \.]/).delete_if{ |e| e.blank? }
@@ -262,24 +264,24 @@ private
                     editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                   end
 
-                  @result[:book_author_from4] += " ; ред. #{editor_q}"
+                  result += " ; ред. #{editor_q}"
               end
 
               if !(params[:organizations].blank?) then
-                @result[:book_author_from4] += " ; #{params[:organizations]}"
+                result += " ; #{params[:organizations]}"
               end
 
               if !(params[:edition_number].blank?) then
-                @result[:book_author_from4] += ". — #{params[:edition_number]}"
+                result += ". — #{params[:edition_number]}"
               end
 
-              @result[:book_author_from4] += ". — #{params[:city]}: "
+              result += ". — #{params[:city]}: "
 
-              @result[:book_author_from4] += "#{params[:publisher]}, "
+              result += "#{params[:publisher]}, "
 
-              @result[:book_author_from4] += "#{params[:year]}. — "
+              result += "#{params[:year]}. — "
 
-              @result[:book_author_from4] += "#{params[:volume]} c."
+              result += "#{params[:volume]} c."
 
             end
 
@@ -290,17 +292,17 @@ private
   def digest
         unless params[:title].blank? || params[:city].blank? || params[:publisher].blank? ||  params[:year].blank? || params[:volume].blank?
 
-                  @result[:digest] = String.new
-                  @result[:digest] += "Сборник статей"
+                  result = String.new
+                  result += "Сборник статей"
 
-                  @result[:digest] += " #{params[:title]}"
+                  result += " #{params[:title]}"
 
                   if !(params[:title_info].blank?) then
-                    @result[:digest] += " : #{params[:title_info]}"
+                    result += " : #{params[:title_info]}"
                   end
 
                   if !(params[:organizations].blank?) then
-                    @result[:digest] += " / #{params[:organizations]}"
+                    result += " / #{params[:organizations]}"
                   end
 
                   if !(params[:compiler].blank?) then
@@ -312,7 +314,7 @@ private
                         compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
                       end
 
-                      @result[:digest] += " ; сост.: #{compiler_q}"
+                      result += " ; сост.: #{compiler_q}"
                   end
 
                   if !(params[:editor].blank?) then
@@ -324,16 +326,16 @@ private
                         editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                       end
 
-                      @result[:digest] += " ; ред. #{editor_q}"
+                      result += " ; ред. #{editor_q}"
                   end
 
-                  @result[:digest] += ". — #{params[:city]}"
+                  result += ". — #{params[:city]}"
 
-                  @result[:digest] += " : #{params[:publisher]}"
+                  result += " : #{params[:publisher]}"
 
-                  @result[:digest] += ", #{params[:year]}"
+                  result += ", #{params[:year]}"
 
-                  @result[:digest] += ". — #{params[:volume]} с."
+                  result += ". — #{params[:volume]} с."
 
         end
   end
@@ -341,8 +343,8 @@ private
   def tome
       unless params[:title].blank? || params[:volume_tome].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank?
 
-                  @result[:tome] = String.new
-                  @result[:tome] += "Многотомные издания"
+                  result = String.new
+                  result += "Многотомные издания"
 
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
@@ -375,15 +377,15 @@ private
                           end
                         end
                       end
-                      @result[:tome] += " #{authors_q}"
+                      result += " #{authors_q}"
                   end
 
-                  @result[:tome] += " #{params[:title]}"
+                  result += " #{params[:title]}"
 
-                  @result[:tome] += " : в #{params[:volume_tome]} т."
+                  result += " : в #{params[:volume_tome]} т."
 
                   if !(params[:author].blank?) then
-                      @result[:tome] += " / #{authors_r}"
+                      result += " / #{authors_r}"
                   end
 
                   if !(params[:compiler].blank?) then
@@ -395,7 +397,7 @@ private
                         compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
                       end
 
-                      @result[:tome] += " ; сост.: #{compiler_q}"
+                      result += " ; сост.: #{compiler_q}"
                   end
 
                   if !(params[:editor].blank?) then
@@ -407,20 +409,20 @@ private
                         editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                       end
 
-                      @result[:tome] += " ; ред. #{editor_q}"
+                      result += " ; ред. #{editor_q}"
                   end
 
                   if !(params[:edition_number].blank?) then
-                    @result[:tome] += ". — #{params[:edition_number]}-е изд"
+                    result += ". — #{params[:edition_number]}-е изд"
                   end
 
-                  @result[:tome] += ". — #{params[:city]}"
+                  result += ". — #{params[:city]}"
 
-                  @result[:tome] += " : #{params[:publisher]}"
+                  result += " : #{params[:publisher]}"
 
-                  @result[:tome] += ", #{params[:year]}"
+                  result += ", #{params[:year]}"
 
-                  @result[:tome] += ". — #{params[:volume_tome]} т."
+                  result += ". — #{params[:volume_tome]} т."
 
         # r[:edition_number] = "#{params[:edition_number]}"
 
@@ -431,8 +433,8 @@ private
 
             unless params[:title].blank? || params[:title_info].blank? ||  params[:city].blank? || params[:publisher].blank? || params[:year].blank? || params[:tome_number].blank?
 
-                  @result[:tome_single] = String.new
-                  @result[:tome_single] += "Один том многотомного издания"
+                  result = String.new
+                  result += "Один том многотомного издания"
 
 
                           authors = params[:author].delete_if{ |e| e.blank? }
@@ -466,15 +468,15 @@ private
                                   end
                               end
                             end
-                        @result[:tome_single] += " #{authors_q}"
+                        result += " #{authors_q}"
                         end
 
-                        @result[:tome_single] += " #{params[:title]}"
+                        result += " #{params[:title]}"
 
-                        @result[:tome_single] += " : в #{params[:volume_tome]} т."
+                        result += " : в #{params[:volume_tome]} т."
 
                         if !(params[:author].blank?) then
-                              @result[:tome_single] += " / #{authors_r}"
+                              result += " / #{authors_r}"
                         end
 
                         if !(params[:compiler].blank?) then
@@ -486,7 +488,7 @@ private
                           compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
                         end
 
-                        @result[:tome_single] += " ; сост.: #{compiler_q}"
+                        result += " ; сост.: #{compiler_q}"
                         end
 
                         if !(params[:editor].blank?) then
@@ -498,22 +500,22 @@ private
                               editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                         end
 
-                        @result[:tome_single] += " ; ред. #{editor_q}"
+                        result += " ; ред. #{editor_q}"
                         end
 
                         if !(params[:edition_number].blank?) then
-                              @result[:tome_single] += ". — #{params[:edition_number]}-е изд"
+                              result += ". — #{params[:edition_number]}-е изд"
                         end
 
-                        @result[:tome_single] += ". — #{params[:city]}"
+                        result += ". — #{params[:city]}"
 
-                        @result[:tome_single] += " : #{params[:publisher]}"
+                        result += " : #{params[:publisher]}"
 
-                        @result[:tome_single] += ". — #{params[:tome_number]} т."
+                        result += ". — #{params[:tome_number]} т."
 
-                        @result[:tome_single] += ". — #{params[:year]}"
+                        result += ". — #{params[:year]}"
 
-                        @result[:tome_single] += ". — #{params[:volume]} c."
+                        result += ". — #{params[:volume]} c."
 
 
         end
@@ -523,8 +525,8 @@ private
 
         unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:city].blank? ||  params[:year].blank? || params[:position].blank?
 
-              @result[:book_article_1to3] = String.new
-              @result[:book_article_1to3] += "Статья из книги с 1—3 авторами"
+              result = String.new
+              result += "Статья из книги с 1—3 авторами"
 
               authors = params[:author].delete_if{ |e| e.blank? }
               authors.map! do |author|
@@ -558,16 +560,16 @@ private
                   end
                 end
 
-              @result[:book_article_1to3] += " #{authors_q}"
+              result += " #{authors_q}"
 
-              @result[:book_article_1to3] += " #{params[:article_title]}"
+              result += " #{params[:article_title]}"
 
-              @result[:book_article_1to3] += " / #{authors_r} // "
+              result += " / #{authors_r} // "
 
-              @result[:book_article_1to3] += "#{params[:title]}"
+              result += "#{params[:title]}"
 
               if !(params[:title_info].blank?) then
-                @result[:book_article_1to3] += " : #{params[:title_info]}"
+                result += " : #{params[:title_info]}"
               end
 
               if !(params[:compiler].blank?) then
@@ -579,7 +581,7 @@ private
                 compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
               end
 
-              @result[:book_article_1to3] += " ; сост.: #{compiler_q}"
+              result += " ; сост.: #{compiler_q}"
               end
 
 
@@ -592,14 +594,14 @@ private
                   editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
               end
 
-                @result[:book_article_1to3] += " ; ред. #{editor_q}"
+                result += " ; ред. #{editor_q}"
               end
 
-              @result[:book_article_1to3] += ". — #{params[:city]}"
+              result += ". — #{params[:city]}"
 
-              @result[:book_article_1to3] += ", #{params[:year]}"
+              result += ", #{params[:year]}"
 
-              @result[:book_article_1to3] += ". — C. #{params[:position]}."
+              result += ". — C. #{params[:position]}."
 
             end
         end
@@ -609,8 +611,8 @@ private
 
           unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:city].blank? ||  params[:year].blank? || params[:position].blank?
 
-                @result[:book_article_from4] = String.new
-                @result[:book_article_from4] += "Статья из книги с 4 и более авторами"
+                result = String.new
+                result += "Статья из книги с 4 и более авторами"
 
                               authors = params[:author].delete_if{ |e| e.blank? }
                               authors.map! do |author|
@@ -645,14 +647,14 @@ private
                             end
 
 
-                @result[:book_article_from4] += " #{params[:article_title]}"
+                result += " #{params[:article_title]}"
 
-                @result[:book_article_from4] += " / #{authors_r} [и др.] // "
+                result += " / #{authors_r} [и др.] // "
 
-                @result[:book_article_from4] += "#{params[:title]}"
+                result += "#{params[:title]}"
 
                 if !(params[:title_info].blank?) then
-                  @result[:book_article_from4] += " : #{params[:title_info]}"
+                  result += " : #{params[:title_info]}"
                 end
 
                 if !(params[:compiler].blank?) then
@@ -664,7 +666,7 @@ private
                   compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
                 end
 
-                @result[:book_article_from4] += " ; сост.: #{compiler_q}"
+                result += " ; сост.: #{compiler_q}"
                 end
 
 
@@ -677,14 +679,14 @@ private
                     editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                 end
 
-                  @result[:book_article_from4] += " ; ред. #{editor_q}"
+                  result += " ; ред. #{editor_q}"
                 end
 
-                @result[:book_article_from4] += ". — #{params[:city]}"
+                result += ". — #{params[:city]}"
 
-                @result[:book_article_from4] += ", #{params[:year]}"
+                result += ", #{params[:year]}"
 
-                @result[:book_article_from4] += ". — C. #{params[:position]}."
+                result += ". — C. #{params[:position]}."
 
               end
           end
@@ -694,8 +696,8 @@ private
 
             unless  params[:article_title].blank? || params[:title].blank? || params[:title_info].blank? || params[:city].blank? || params[:year].blank? || params[:tome_number].blank? || params[:position].blank?
 
-                  @result[:digest_article] = String.new
-                  @result[:digest_article] += "Статья из собрания сочинений"
+                  result = String.new
+                  result += "Статья из собрания сочинений"
 
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
@@ -728,19 +730,19 @@ private
                           end
                       end
                     end
-                @result[:digest_article] += " #{authors_q}"
+                result += " #{authors_q}"
                 end
 
-                @result[:digest_article] += " #{params[:article_title]}"
+                result += " #{params[:article_title]}"
 
                 if !(params[:author].blank?) then
-                      @result[:digest_article] += " / #{authors_r}"
+                      result += " / #{authors_r}"
                 end
 
 
-                  @result[:digest_article] += " // #{params[:title]}"
+                  result += " // #{params[:title]}"
 
-                  @result[:digest_article] += " : #{params[:title_info]}"
+                  result += " : #{params[:title_info]}"
 
                   if !(params[:compiler].blank?) then
                     compiler = params[:compiler].split(/[ \.]/).delete_if{ |e| e.blank? }
@@ -751,7 +753,7 @@ private
                     compiler_q = "#{compiler[1]}. #{compiler[2]}. #{compiler[0]}"
                   end
 
-                  @result[:digest_article] += " ; сост.: #{compiler_q}"
+                  result += " ; сост.: #{compiler_q}"
                   end
 
 
@@ -764,16 +766,16 @@ private
                       editor_q = "#{editor[1]}. #{editor[2]}. #{editor[0]}"
                   end
 
-                    @result[:digest_article] += " ; ред. #{editor_q}"
+                    result += " ; ред. #{editor_q}"
                   end
 
-                  @result[:digest_article] += ". — #{params[:city]}"
+                  result += ". — #{params[:city]}"
 
-                  @result[:digest_article] += ", #{params[:year]}"
+                  result += ", #{params[:year]}"
 
-                  @result[:digest_article] += ". — № #{params[:number]}"
+                  result += ". — № #{params[:number]}"
 
-                  @result[:digest_article] += ". — C. #{params[:position]}."
+                  result += ". — C. #{params[:position]}."
 
         end
       end
@@ -782,8 +784,8 @@ private
 
         unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:year].blank? || params[:tome_number].blank? || params[:position].blank? || params[:number].blank?
 
-              @result[:magazines_article] = String.new
-              @result[:magazines_article] += "Статья из журнала"
+              result = String.new
+              result += "Статья из журнала"
 
               if (authors[0][2] == nil) then
                 authors_q = "#{authors[0][0]}, #{authors[0][1]}."
@@ -810,23 +812,23 @@ private
               end
 
 
-              @result[:magazines_article] += " #{authors_q}"
+              result += " #{authors_q}"
 
-              @result[:magazines_article] += " #{params[:article_title]} / "
+              result += " #{params[:article_title]} / "
 
-              @result[:magazines_article] += " #{authors_r} // "
+              result += " #{authors_r} // "
 
-              @result[:magazines_article] += "#{params[:title]}. "
+              result += "#{params[:title]}. "
 
-              @result[:magazines_article] += ". — #{params[:year]}"
+              result += ". — #{params[:year]}"
 
               if !(params[:tome_number].blank?) then
-                @result[:magazines_article] += ". — Т. #{params[:tome_number]}"
+                result += ". — Т. #{params[:tome_number]}"
               end
 
-              @result[:magazines_article] += ". — № #{params[:number]}"
+              result += ". — № #{params[:number]}"
 
-              @result[:magazines_article] += ". — C. #{params[:position]}."
+              result += ". — C. #{params[:position]}."
 
     end
   end
@@ -835,8 +837,8 @@ private
 
         unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:year].blank? || params[:tome_number].blank? || params[:position].blank?
 
-              @result[:papers_article] = String.new
-              @result[:papers_article] += "Статья из  газеты"
+              result = String.new
+              result += "Статья из  газеты"
 
               if (authors[0][2] == nil) then
                 authors_q = "#{authors[0][0]}, #{authors[0][1]}."
@@ -863,32 +865,32 @@ private
               end
 
 
-              @result[:papers_article] += " #{authors_q}"
+              result += " #{authors_q}"
 
-              @result[:papers_article] += " #{params[:article_title]} / "
+              result += " #{params[:article_title]} / "
 
-              @result[:papers_article] += " #{authors_r} // "
+              result += " #{authors_r} // "
 
-              @result[:papers_article] += "#{params[:title]}. "
+              result += "#{params[:title]}. "
 
-              @result[:papers_article] += ". — #{params[:year]}"
+              result += ". — #{params[:year]}"
 
               if !(params[:tome_number].blank?) then
-                @result[:papers_article] += ". — Т. #{params[:tome_number]}"
+                result += ". — Т. #{params[:tome_number]}"
               end
 
               if !(params[:number].blank?) then
-                @result[:papers_article] += ". — № #{params[:number]}"
+                result += ". — № #{params[:number]}"
               end
 
               if !(params[:edition_number].blank?) then
-                @result[:papers_article] += ". — Вып. #{params[:edition_number]}"
+                result += ". — Вып. #{params[:edition_number]}"
               end
 
-              @result[:papers_article] += ". — #{params[:release_date]}"
+              result += ". — #{params[:release_date]}"
 
               if !(params[:position].blank?) then
-                @result[:papers_article] += ". — C. #{params[:position]}."
+                result += ". — C. #{params[:position]}."
               end
 
     end
@@ -898,8 +900,8 @@ private
 
             unless params[:article_title].blank? || params[:url].blank? || params[:accessing_resource].blank?
 
-                  @result[:internet_resourse] = String.new
-                  @result[:internet_resourse] += "Электронный ресурс"
+                  result = String.new
+                  result += "Электронный ресурс"
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
                     author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
@@ -931,30 +933,30 @@ private
                           end
                       end
                     end
-                    @result[:internet_resourse] += " #{authors_q}"
+                    result += " #{authors_q}"
                 end
 
-                @result[:internet_resourse] += " #{params[:article_title]} [Электронный ресурс] "
+                result += " #{params[:article_title]} [Электронный ресурс] "
 
                 if !(params[:author].blank?) then
-                      @result[:internet_resourse] += " / #{authors_r}"
+                      result += " / #{authors_r}"
                 end
 
                 if !(params[:city].blank?) then
-                  @result[:internet_resourse] += ". — #{params[:city]}"
+                  result += ". — #{params[:city]}"
                 end
 
                 if !(params[:publisher].blank?) then
-                  @result[:internet_resourse] += " : #{params[:publisher]}"
+                  result += " : #{params[:publisher]}"
                 end
 
                 if !(params[:year].blank?) then
-                  @result[:internet_resourse] += ", #{params[:year]}"
+                  result += ", #{params[:year]}"
                 end
 
-                  @result[:internet_resourse] += ". — URL: #{params[:url]}"
+                  result += ". — URL: #{params[:url]}"
 
-                  @result[:internet_resourse] += " (дата обращения: #{params[:accessing_resource]})."
+                  result += " (дата обращения: #{params[:accessing_resource]})."
 
               end
 

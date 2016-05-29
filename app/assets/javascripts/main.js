@@ -22,8 +22,17 @@ function check(fields) {
   var data = {};
 
   for (var i=0; i<fields.length; i++) {
-    data[fields[i].attr('name')] = fields[i].val();
+    if (fields[i].attr('name')=='author[]'){
+      if (data[fields[i].attr('name')]) {
+        data[fields[i].attr('name')].push(fields[i].val());
+      } else {
+        data[fields[i].attr('name')] = [fields[i].val()];
+      }
+    } else {
+      data[fields[i].attr('name')] = fields[i].val();
+    }
   }
+
 
   console.log(data);
   var request = $.ajax({
