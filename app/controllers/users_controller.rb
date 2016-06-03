@@ -16,10 +16,12 @@ class UsersController < ApplicationController
   def new
     @user = User.new
     p @user
+    p '!!!!!!!!!!!!!!!!'
   end
 
   # GET /users/1/edit
   def edit
+    p 'edit!!!!!!!!!!!!!!!!!'
   end
 
   # POST /users

@@ -3,12 +3,24 @@ $(document).ready(function() {
 
 
   $('.add-field').click(function() {
+    if (!($(this).attr('id') == 'add_author') && $(this).hasClass('added')) return false;
+
     var id = $(this).attr('id');
     if (fields[id]) {
       var input = fields[id]();
       $('#mainform').append(input);
       myFields.push(input);
+      if (!($(this).attr('id') == 'add_author')) $(this).addClass('added');
     }
+  })
+
+  $('body').on('click', '.remove-field', function(e) {
+    var $parent = $(e.target).parent();
+    var index = $parent.index();
+    var id = '#' + $parent.find('input').attr('rel');
+    $(id).removeClass('added');
+    $parent.remove();
+    myFields.splice(index, 1);
   })
 
   $('#check').click(function() {
@@ -42,6 +54,11 @@ function check(fields) {
   });
 
   request.done(function( msg ) {
+    // console.log(msg)
+    sentence.unbind();
+    sentence.click(function() {
+      generateFields(msg.fields);
+    })
     // sentence_type.val(msg)
     // alert(msg['type'])
     // alert(msg['fields'])
@@ -80,7 +97,7 @@ function check(fields) {
         break;
       case 'internet_resourse':
         sentence.text('Вы хотите создать ссылку для интернет ресурса?');
-          generateFields(msg['fields'])
+          // generateFields(msg['fields'])
         break;
       default:
         alert('default ' + msg['fields'])
@@ -94,6 +111,18 @@ function check(fields) {
 }
 
 function generateFields(p) {
+  if (p[0] == 1 && !$('input[name="author[]"]').length) {
+    $('#add_author').trigger('click');
+  }
+
+  for (var i=2; i<p.length; i++) {
+    if (p[i] == 1) {
+      var $addField = $($('.add-field')[i-1]);
+      if (!$addField.hasClass('added')) {
+        $addField.trigger('click');
+      }
+    }
+  }
   // if(p[0] == 1){ alert('author') }
   // if(p[2] == 1){ alert('title') }
   // if(p[3] == 1){ alert('title_info') }
@@ -117,61 +146,61 @@ function generateFields(p) {
 
 var fields = {
   'add_author': function() {
-    return $('<input class="form-control" id="author" name="author[]" type="text" placeholder="Автор">');
+    return $('<div class="form-group"><input class="form-control field" id="author" rel="add_author" name="author[]" type="text" placeholder="Автор"><span class="remove-field"></span></div>');
   },
   'add_title': function() {
-    return $('<input class="form-control" id="title" name="title" type="text" placeholder="Заголовок">');
+    return $('<div class="form-group"><input class="form-control field" id="title" rel="add_title" name="title" type="text" placeholder="Заголовок"><span class="remove-field"></span></div>');
   },
   'add_title_info': function() {
-    return $('<input class="form-control" id="title_info" name="title_info" type="text" placeholder="Сведения, относящиеся к заглавию">');
+    return $('<div class="form-group"><input class="form-control field" id="title_info" name="title_info" type="text" placeholder="Сведения, относящиеся к заглавию"><span class="remove-field"></span></div>');
   },
   'add_editor': function() {
-    return $('<input class="form-control" id="editor" name="editor" type="text" placeholder="Редактор">');
+    return $('<div class="form-group"><input class="form-control field" id="editor" name="editor" type="text" placeholder="Редактор"><span class="remove-field"></span></div>');
   },
   'add_compiler': function() {
-    return $('<input class="form-control" id="compiler" name="compiler" type="text" placeholder="Составитель">');
+    return $('<div class="form-group"><input class="form-control field" id="compiler" name="compiler" type="text" placeholder="Составитель"><span class="remove-field"></span></div>');
   },
   'add_organizations': function() {
-    return $('<input class="form-control" id="organizations" name="organizations" type="text" placeholder="Наименование учреждения">');
+    return $('<div class="form-group"><input class="form-control field" id="organizations" name="organizations" type="text" placeholder="Наименование учреждения"><span class="remove-field"></span></div>');
   },
   'add_year': function() {
-    return $('<input class="form-control" id="year" name="year" type="text" placeholder="Год издания">');
+    return $('<div class="form-group"><input class="form-control field" id="year" name="year" type="text" placeholder="Год издания"><span class="remove-field"></span></div>');
   },
   'add_publisher': function() {
-    return $('<input class="form-control" id="publisher" name="publisher" type="text" placeholder="Издательство">');
+    return $('<div class="form-group"><input class="form-control field" id="publisher" name="publisher" type="text" placeholder="Издательство"><span class="remove-field"></span></div>');
   },
   'add_volume': function() {
-    return $('<input class="form-control" id="volume" name="volume" type="text" placeholder="Количество страниц">');
+    return $('<div class="form-group"><input class="form-control field" id="volume" name="volume" type="text" placeholder="Количество страниц"><span class="remove-field"></span></div>');
   },
   'add_volume_tome': function() {
-    return $('<input class="form-control" id="volume_tome" name="volume_tome" type="text" placeholder="Количество томов">');
+    return $('<div class="form-group"><input class="form-control field" id="volume_tome" name="volume_tome" type="text" placeholder="Количество томов"><span class="remove-field"></span></div>');
   },
   'add_tome_number': function() {
-    return $('<input class="form-control" id="tome_number" name="tome_number" type="text" placeholder="Номер тома">');
+    return $('<div class="form-group"><input class="form-control field" id="tome_number" name="tome_number" type="text" placeholder="Номер тома"><span class="remove-field"></span></div>');
   },
   'add_city': function() {
-    return $('<input class="form-control" id="city" name="city" type="text" placeholder="Место издания (город)">');
+    return $('<div class="form-group"><input class="form-control field" id="city" name="city" type="text" placeholder="Место издания (город)"><span class="remove-field"></span></div>');
   },
   'add_edition_number': function() {
-    return $('<input class="form-control" id="edition_number" name="edition_number" type="text" placeholder="Номер издания">');
+    return $('<div class="form-group"><input class="form-control field" id="edition_number" name="edition_number" type="text" placeholder="Номер издания"><span class="remove-field"></span></div>');
   },
   'add_number': function() {
-    return $('<input class="form-control" id="number" name="number" type="text" placeholder="Номер выпуска">');
+    return $('<div class="form-group"><input class="form-control field" id="number" name="number" type="text" placeholder="Номер выпуска"><span class="remove-field"></span></div>');
   },
   'add_position': function() {
-    return $('<input class="form-control" id="position" name="position" type="text" placeholder="Место размещения статьи (страницы)">');
+    return $('<div class="form-group"><input class="form-control field" id="position" name="position" type="text" placeholder="Место размещения статьи (страницы)"><span class="remove-field"></span></div>');
   },
   'add_article_title': function() {
-    return $('<input class="form-control" id="article_title" name="article_title" type="text" placeholder="Название статьи">');
+    return $('<div class="form-group"><input class="form-control field" id="article_title" name="article_title" type="text" placeholder="Название статьи"><span class="remove-field"></span></div>');
   },
   'add_url': function() {
-    return $('<input class="form-control" id="url" name="url" type="text" placeholder="Интернет-ресурс">');
+    return $('<div class="form-group"><input class="form-control field" id="url" name="url" type="text" placeholder="Интернет-ресурс"><span class="remove-field"></span></div>');
   },
   'add_release_date': function() {
-    return $('<input class="form-control" id="release_date" name="release_date" type="text" placeholder="Дата выпуска">');
+    return $('<div class="form-group"><input class="form-control field" id="release_date" name="release_date" type="text" placeholder="Дата выпуска"><span class="remove-field"></span></div>');
   },
   'add_accessing_resource': function() {
-    return $('<input class="form-control" id="accessing_resource" name="accessing_resource" type="text" placeholder="Дата обращения">');
+    return $('<div class="form-group"><input class="form-control field" id="accessing_resource" name="accessing_resource" type="text" placeholder="Дата обращения"><span class="remove-field"></span></div>');
   }
 }
 
