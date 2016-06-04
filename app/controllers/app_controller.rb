@@ -3,6 +3,73 @@ class AppController < ApplicationController
   def main
   end
 
+  $vectors = {
+    book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
+    book_author_from4:  Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
+    digest:             Vector[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
+    tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
+    tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
+    book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
+    book_article_from4: Vector[0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
+    digest_article:     Vector[0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0], # digest_article
+    magazines_article:  Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0], # magazines_article
+    papers_article:     Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0], # papers_article
+    internet_resourse:  Vector[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1]  #internet_resourse
+  }
+  # 1  Автор 1-3
+  # 2  Автор 4>
+  # 3  Заголовок
+  # 4  Сведения, относящиеся к заглавию
+  # 5  Редактор
+  # 6  Составитель
+  # 7  Наименование учреждения
+  # 8  Год издания
+  # 9  Издательство
+  # 10  Количество страниц
+  # 11  Количество томов
+  # 12  Номер тома
+  # 13  Место издания (город)
+  # 14  Номер издания
+  # 15  Номер выпуска
+  # 16  Место размещения статьи (страницы)
+  # 17  Название статьи
+  # 18  Интернет-ресурс
+  # 19  Дата выпуска
+  # 20  Дата обращения
+
+def typeChoose
+  p $vectors[params[:t].to_sym]
+  render text: $vectors[params[:t].to_sym]
+  # case params[:t]
+  #   when "book_author_1to3"
+  #     result = $vectors[:book_author_1to3]
+  #     p result
+  #   when "book_author_from4"
+  #     result = $vectors[:book_author_from4]
+  #   when "digest"
+  #     result = $vectors[:digest]
+  #   when "tome"
+  #     result = $vectors[:tome]
+  #   when "tome_single"
+  #     result = $vectors[:tome_single]
+  #   when "book_article_1to3"
+  #     result = $vectors[:book_article_1to3]
+  #   when "book_article_from4"
+  #     result = $vectors[:book_article_from4]
+  #   when "magazines_article"
+  #     result = $vectors[:magazines_article]
+  #   when "papers_article"
+  #     result = $vectors[:papers_article]
+  #   when "internet_resourse"
+  #     result = $vectors[:internet_resourse]
+  #   else
+  #     p 'type not found'
+  #   end
+  # p "============="
+  # p result
+  # render text: result
+end
+
   def check
     require 'matrix'
 
@@ -28,40 +95,7 @@ class AppController < ApplicationController
       # p (params[p].blank? ? 0 : 1).to_i
     end
 
-    vectors = {
-      book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
-      book_author_from4:  Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
-      digest:             Vector[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
-      tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
-      tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
-      book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
-      book_article_from4: Vector[0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
-      digest_article:     Vector[0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0], # digest_article
-      magazines_article:  Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0], # magazines_article
-      papers_article:     Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0], # papers_article
-      internet_resourse:  Vector[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1]  #internet_resourse
-    }
 
-    # 1  Автор 1-3
-    # 2  Автор 4>
-    # 3  Заголовок
-    # 4  Сведения, относящиеся к заглавию
-    # 5  Редактор
-    # 6  Составитель
-    # 7  Наименование учреждения
-    # 8  Год издания
-    # 9  Издательство
-    # 10  Количество страниц
-    # 11  Количество томов
-    # 12  Номер тома
-    # 13  Место издания (город)
-    # 14  Номер издания
-    # 15  Номер выпуска
-    # 16  Место размещения статьи (страницы)
-    # 17  Название статьи
-    # 18  Интернет-ресурс
-    # 19  Дата выпуска
-    # 20  Дата обращения
 
     inner_array = []
 
@@ -97,8 +131,8 @@ class AppController < ApplicationController
     puts '############################'
     puts inner_vector
     p "condidate"
-    p candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
-    candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
+    p candidate = $vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
+    candidate = $vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
     result = nil
     case candidate[0]
       when :book_author_1to3

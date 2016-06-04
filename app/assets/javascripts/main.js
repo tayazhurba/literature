@@ -9,7 +9,8 @@ $(document).ready(function() {
     if (fields[id]) {
       var input = fields[id]();
       $('#mainform').append(input);
-      myFields.push(input);
+      myFields.push($(input).find('input'));
+      console.log(myFields);
       if (!($(this).attr('id') == 'add_author')) $(this).addClass('added');
     }
   })
@@ -26,6 +27,14 @@ $(document).ready(function() {
   $('#check').click(function() {
     check(myFields);
   })
+
+
+  $('.choose-type').click(function(){
+    var id = $(this).attr('id');
+    typeChoose(id);
+  })
+
+
 })
 
 function check(fields) {
@@ -44,7 +53,6 @@ function check(fields) {
       data[fields[i].attr('name')] = fields[i].val();
     }
   }
-
 
   console.log(data);
   var request = $.ajax({
@@ -110,6 +118,14 @@ function check(fields) {
   });
 }
 
+function typeChoose(id) {
+  var request = $.ajax({
+    url: "/typeChoose/" + id,
+    method: "GET"
+  });
+}
+
+
 function generateFields(p) {
   if (p[0] == 1 && !$('input[name="author[]"]').length) {
     $('#add_author').trigger('click');
@@ -123,25 +139,6 @@ function generateFields(p) {
       }
     }
   }
-  // if(p[0] == 1){ alert('author') }
-  // if(p[2] == 1){ alert('title') }
-  // if(p[3] == 1){ alert('title_info') }
-  // if(p[4] == 1){ alert('editor') }
-  // if(p[5] == 1){ alert('compiler') }
-  // if(p[6] == 1){ alert('organizations') }
-  // if(p[7] == 1){ alert('year') }
-  // if(p[8] == 1){ alert('publisher') }
-  // if(p[9] == 1){ alert('volume') }
-  // if(p[10] == 1){ alert('volume_tome') }
-  // if(p[11] == 1){ alert('volume_tome') }
-  // if(p[12] == 1){ alert('city') }
-  // if(p[13] == 1){ alert('edition_number') }
-  // if(p[14] == 1){ alert('number') }
-  // if(p[15] == 1){ alert('position') }
-  // if(p[16] == 1){ alert('article_title') }
-  // if(p[17] == 1){ alert('url') }
-  // if(p[18] == 1){ alert('release_date') }
-  // if(p[19] == 1){ alert('accessing_resource') }
 }
 
 var fields = {
@@ -152,149 +149,54 @@ var fields = {
     return $('<div class="form-group"><input class="form-control field" id="title" rel="add_title" name="title" type="text" placeholder="Заголовок"><span class="remove-field"></span></div>');
   },
   'add_title_info': function() {
-    return $('<div class="form-group"><input class="form-control field" id="title_info" name="title_info" type="text" placeholder="Сведения, относящиеся к заглавию"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="title_info" rel="add_title_info" name="title_info" type="text" placeholder="Сведения, относящиеся к заглавию"><span class="remove-field"></span></div>');
   },
   'add_editor': function() {
-    return $('<div class="form-group"><input class="form-control field" id="editor" name="editor" type="text" placeholder="Редактор"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="editor" rel="add_editor" name="editor" type="text" placeholder="Редактор"><span class="remove-field"></span></div>');
   },
   'add_compiler': function() {
-    return $('<div class="form-group"><input class="form-control field" id="compiler" name="compiler" type="text" placeholder="Составитель"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="compiler" rel="add_compiler" name="compiler" type="text" placeholder="Составитель"><span class="remove-field"></span></div>');
   },
   'add_organizations': function() {
-    return $('<div class="form-group"><input class="form-control field" id="organizations" name="organizations" type="text" placeholder="Наименование учреждения"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="organizations" rel="add_organizations" name="organizations" type="text" placeholder="Наименование учреждения"><span class="remove-field"></span></div>');
   },
   'add_year': function() {
-    return $('<div class="form-group"><input class="form-control field" id="year" name="year" type="text" placeholder="Год издания"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="year" rel="add_year" name="year" type="text" placeholder="Год издания"><span class="remove-field"></span></div>');
   },
   'add_publisher': function() {
-    return $('<div class="form-group"><input class="form-control field" id="publisher" name="publisher" type="text" placeholder="Издательство"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="publisher" rel="add_publisher" name="publisher" type="text" placeholder="Издательство"><span class="remove-field"></span></div>');
   },
   'add_volume': function() {
-    return $('<div class="form-group"><input class="form-control field" id="volume" name="volume" type="text" placeholder="Количество страниц"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="volume" rel="add_volume" name="volume" type="text" placeholder="Количество страниц"><span class="remove-field"></span></div>');
   },
   'add_volume_tome': function() {
-    return $('<div class="form-group"><input class="form-control field" id="volume_tome" name="volume_tome" type="text" placeholder="Количество томов"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="volume_tome" rel="add_volume_tome" name="volume_tome" type="text" placeholder="Количество томов"><span class="remove-field"></span></div>');
   },
   'add_tome_number': function() {
-    return $('<div class="form-group"><input class="form-control field" id="tome_number" name="tome_number" type="text" placeholder="Номер тома"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="tome_number" rel="add_tome_number" name="tome_number" type="text" placeholder="Номер тома"><span class="remove-field"></span></div>');
   },
   'add_city': function() {
-    return $('<div class="form-group"><input class="form-control field" id="city" name="city" type="text" placeholder="Место издания (город)"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="city" rel="add_city" name="city" type="text" placeholder="Место издания (город)"><span class="remove-field"></span></div>');
   },
   'add_edition_number': function() {
-    return $('<div class="form-group"><input class="form-control field" id="edition_number" name="edition_number" type="text" placeholder="Номер издания"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="edition_number" rel="add_edition_number" name="edition_number" type="text" placeholder="Номер издания"><span class="remove-field"></span></div>');
   },
   'add_number': function() {
-    return $('<div class="form-group"><input class="form-control field" id="number" name="number" type="text" placeholder="Номер выпуска"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="number" rel="add_number" name="number" type="text" placeholder="Номер выпуска"><span class="remove-field"></span></div>');
   },
   'add_position': function() {
-    return $('<div class="form-group"><input class="form-control field" id="position" name="position" type="text" placeholder="Место размещения статьи (страницы)"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="position" rel="add_position" name="position" type="text" placeholder="Место размещения статьи (страницы)"><span class="remove-field"></span></div>');
   },
   'add_article_title': function() {
-    return $('<div class="form-group"><input class="form-control field" id="article_title" name="article_title" type="text" placeholder="Название статьи"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="article_title" rel="add_article_title" name="article_title" type="text" placeholder="Название статьи"><span class="remove-field"></span></div>');
   },
   'add_url': function() {
-    return $('<div class="form-group"><input class="form-control field" id="url" name="url" type="text" placeholder="Интернет-ресурс"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="url" rel="add_url" name="url" type="text" placeholder="Интернет-ресурс"><span class="remove-field"></span></div>');
   },
   'add_release_date': function() {
-    return $('<div class="form-group"><input class="form-control field" id="release_date" name="release_date" type="text" placeholder="Дата выпуска"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="release_date" rel="add_release_date" name="release_date" type="text" placeholder="Дата выпуска"><span class="remove-field"></span></div>');
   },
   'add_accessing_resource': function() {
-    return $('<div class="form-group"><input class="form-control field" id="accessing_resource" name="accessing_resource" type="text" placeholder="Дата обращения"><span class="remove-field"></span></div>');
+    return $('<div class="form-group"><input class="form-control field" id="accessing_resource" rel="add_accessing_resource" name="accessing_resource" type="text" placeholder="Дата обращения"><span class="remove-field"></span></div>');
   }
 }
-
-// function generateAuthor() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="author" name="author[]" type="text" placeholder="Автор">')
-// }
-//
-// function generateTitle() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="title" name="title" type="text" placeholder="Заголовок">')
-// }
-//
-// function generateTitleInfo() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="title_info" name="title_info" type="text" placeholder="Сведения, относящиеся к заглавию">')
-// }
-//
-// function generateEditor() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="editor" name="editor" type="text" placeholder="Редактор">')
-// }
-//
-// function generateCompiler() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="compiler" name="compiler" type="text" placeholder="Составитель">')
-// }
-//
-// function generateOrganizations() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="organizations" name="organizations" type="text" placeholder="Наименование учреждения">')
-// }
-//
-// function generateYear() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="year" name="year" type="text" placeholder="Год издания">')
-// }
-//
-// function generatePublisher() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="publisher" name="publisher" type="text" placeholder="Издательство">')
-// }
-//
-// function generateVolume() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="volume" name="volume" type="text" placeholder="Количество страниц">')
-// }
-//
-// function generateVolumeTome() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="volume_tome" name="volume_tome" type="text" placeholder="Количество томов">')
-// }
-//
-// function generateTomeNumber() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="tome_number" name="tome_number" type="text" placeholder="Номер тома">')
-// }
-//
-// function generateCity() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="city" name="city" type="text" placeholder="Место издания (город)">')
-// }
-//
-// function generateEditionNumber() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="edition_number" name="edition_number" type="text" placeholder="Номер издания">')
-// }
-//
-// function generateNumber() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="number" name="number" type="text" placeholder="Номер выпуска">')
-// }
-//
-// function generatePosition() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="position" name="position" type="text" placeholder="Место размещения статьи (страницы)">')
-// }
-//
-// function generateArticleTitle() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="article_title" name="article_title" type="text" placeholder="Название статьи">')
-// }
-//
-// function generateUrl() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="url" name="url" type="text" placeholder="Интернет-ресурс">')
-// }
-//
-// function generateReleaseDate() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="release_date" name="release_date" type="text" placeholder="Дата выпуска">')
-// }
-//
-// function generateAccessingResource() {
-//   var mainform = $("#mainform");
-//   mainform.append('<input class="form-control" id="accessing_resource" name="accessing_resource" type="text" placeholder="Дата обращения">')
-// }

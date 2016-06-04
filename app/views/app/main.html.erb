@@ -3,45 +3,66 @@
 
   <!-- <button id='create_button' onclick="generateAuthor()">Автор</button>
   <button id='create_button' onclick="generateTitle()">Заголовок</button> -->
-
+<div style="float:left; width: 60%; margin-right: 10%;">
   <p style="margin-top:50px;">
     <a id="sentence">Вы хотите создать ссылку на книгу с одним автором?</a>
     <input id="sentence_type" type="hidden" value="booboobobo"/>
   </p>
 
 
-  <div id="mainform">
-  </div>
+  <div id="mainform"></div>
 
   <button id='check'>Проверить</button>
 
 
-<div class="dropdown" style="margin:20px 0;">
-  <button id="dLabel" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Добавить поле
-  <span class="caret"></span></button>
-  <ul class="dropdown-menu" area-labelledby="dLabel">
-    <li class="add-field" id="add_author"><a href="#">Автор</a></li>
-    <li class="add-field" id="add_title"><a href="#">Заголовок</a></li>
-    <li class="add-field" id="add_title_info"><a href="#">Сведения, относящиеся к заглавию</a></li>
-    <li class="add-field" id="add_editor"><a href="#">Редактор</a></li>
-    <li class="add-field" id="add_compiler"><a href="#">Составитель</a></li>
-    <li class="add-field" id="add_organizations"><a href="#">Наименование учреждения</a></li>
-    <li class="add-field" id="add_year"><a href="#">Год издания</a></li>
-    <li class="add-field" id="add_publisher"><a href="#">Издательство</a></li>
-    <li class="add-field" id="add_volume"><a href="#">Количество страниц</a></li>
-    <li class="add-field" id="add_volume_tome"><a href="#">Количество томов</a></li>
-    <li class="add-field" id="add_tome_number"><a href="#">Номер тома</a></li>
-    <li class="add-field" id="add_city"><a href="#">Место издания (город)</a></li>
-    <li class="add-field" id="add_edition_number"><a href="#">Номер издания</a></li>
-    <li class="add-field" id="add_number"><a href="#">Номер выпуска</a></li>
-    <li class="add-field" id="add_position"><a href="#">Место размещения статьи (страницы)</a></li>
-    <li class="add-field" id="add_article_title"><a href="#">Название статьи</a></li>
-    <li class="add-field" id="add_url"><a href="#">Интернет-ресурс</a></li>
-    <li class="add-field" id="add_release_date"><a href="#">Дата выпуска</a></li>
-    <li class="add-field" id="add_accessing_resource"><a href="#">Дата обращения</a></li>
-  </ul>
+  <div id="dropDown1" class="dropdown" style="margin:20px 0;">
+    <button id="dLabel" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Добавить поле
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu" area-labelledby="dLabel">
+      <li class="add-field" id="add_author"><a href="#">Автор</a></li>
+      <li class="add-field" id="add_title"><a href="#">Заголовок</a></li>
+      <li class="add-field" id="add_title_info"><a href="#">Сведения, относящиеся к заглавию</a></li>
+      <li class="add-field" id="add_editor"><a href="#">Редактор</a></li>
+      <li class="add-field" id="add_compiler"><a href="#">Составитель</a></li>
+      <li class="add-field" id="add_organizations"><a href="#">Наименование учреждения</a></li>
+      <li class="add-field" id="add_year"><a href="#">Год издания</a></li>
+      <li class="add-field" id="add_publisher"><a href="#">Издательство</a></li>
+      <li class="add-field" id="add_volume"><a href="#">Количество страниц</a></li>
+      <li class="add-field" id="add_volume_tome"><a href="#">Количество томов</a></li>
+      <li class="add-field" id="add_tome_number"><a href="#">Номер тома</a></li>
+      <li class="add-field" id="add_city"><a href="#">Место издания (город)</a></li>
+      <li class="add-field" id="add_edition_number"><a href="#">Номер издания</a></li>
+      <li class="add-field" id="add_number"><a href="#">Номер выпуска</a></li>
+      <li class="add-field" id="add_position"><a href="#">Место размещения статьи (страницы)</a></li>
+      <li class="add-field" id="add_article_title"><a href="#">Название статьи</a></li>
+      <li class="add-field" id="add_url"><a href="#">Интернет-ресурс</a></li>
+      <li class="add-field" id="add_release_date"><a href="#">Дата выпуска</a></li>
+      <li class="add-field" id="add_accessing_resource"><a href="#">Дата обращения</a></li>
+    </ul>
+  </div>
+  <p id="result"></p>
 </div>
-<p id="result"></p>
+
+<div style="float:left; width: 30%; margin-top:50px;">
+  <div id="dropDown2" class="dropdown" style="margin:20px 0;">Хотите выбрать тип ссылки самостоятельно?<br>
+    <button id="tLabel" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top:20px;">Создать ссылку для
+    <span class="caret"></span></button>
+      <ul class="dropdown-menu" area-labelledby="tLabel">
+        <li class="choose-type" id="book_author_1to3"><a href="#">книги с 1-3 акторами</a></li>
+        <li class="choose-type" id="book_author_from4"><a href="#">книги с четырьмя и более авторами</a></li>
+        <li class="choose-type" id="digest"><a href="#">сборника</a></li>
+        <li class="choose-type" id="tome"><a href="#">многотомника</a></li>
+        <li class="choose-type" id="tome_single"><a href="#">отдельного тома многотомного издания</a></li>
+        <li class="choose-type" id="book_article_1to3"><a href="#">статьи из книги с 1-3 авторами</a></li>
+        <li class="choose-type" id="book_article_from4"><a href="#">статьи из книги с четырьмя и более авторами</a></li>
+        <li class="choose-type" id="digest_article"><a href="#">статьи из сборника</a></li>
+        <li class="choose-type" id="magazines_article"><a href="#">статьи из журнала</a></li>
+        <li class="choose-type" id="papers_article"><a href="#">статьи из газеты</a></li>
+        <li class="choose-type" id="internet_resourse"><a href="#">интернет ресурса</a></li>
+      </ul>
+  </div>
+</div>
+
 </div>
 
 
