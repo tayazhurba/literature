@@ -3,19 +3,7 @@ class AppController < ApplicationController
   def main
   end
 
-  $vectors = {
-    book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
-    book_author_from4:  Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
-    digest:             Vector[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
-    tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
-    tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
-    book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
-    book_article_from4: Vector[0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
-    digest_article:     Vector[0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0], # digest_article
-    magazines_article:  Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0], # magazines_article
-    papers_article:     Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0], # papers_article
-    internet_resourse:  Vector[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1]  #internet_resourse
-  }
+
   # 1  Автор 1-3
   # 2  Автор 4>
   # 3  Заголовок
@@ -38,8 +26,8 @@ class AppController < ApplicationController
   # 20  Дата обращения
 
 def typeChoose
-  p $vectors[params[:t].to_sym]
-  render text: $vectors[params[:t].to_sym]
+  # p $vectors[params[:t].to_sym]
+  # render text: $vectors[params[:t].to_sym]
   # case params[:t]
   #   when "book_author_1to3"
   #     result = $vectors[:book_author_1to3]
@@ -95,6 +83,19 @@ end
       # p (params[p].blank? ? 0 : 1).to_i
     end
 
+    vectors = {
+      book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
+      book_author_from4:  Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
+      digest:             Vector[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
+      tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
+      tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
+      book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
+      book_article_from4: Vector[0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_from4
+      digest_article:     Vector[0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0], # digest_article
+      magazines_article:  Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0], # magazines_article
+      papers_article:     Vector[1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0], # papers_article
+      internet_resourse:  Vector[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1]  #internet_resourse
+    }
 
 
     inner_array = []
@@ -121,18 +122,15 @@ end
     inner_array << field_check(:accessing_resource)
 
     inner_vector = Vector.elements(inner_array)
-    # inner_vector = Vector[0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 
     puts '---'
-    # puts inner_vector
-    # puts '---'
-    # puts vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
-
     puts '############################'
     puts inner_vector
     p "condidate"
-    p candidate = $vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
-    candidate = $vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
+    p candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
+    p "condidate end"
+    candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
+
     result = nil
     case candidate[0]
       when :book_author_1to3
@@ -158,7 +156,11 @@ end
       else
         p candidate[0]
       end
-
+      p "result="
+      p result
+    if (result == nil) then
+      result = "Здесь будет выведена библиографическая запись. Но мы не смогли определить тип источника. Пожалуйста, заполните ещё поля либо воспользуйтесь автоматически определёным типом."
+    end
     response = {
       type:   candidate[0],
       fields: candidate[1].to_a,
@@ -207,7 +209,6 @@ private
             end
 
             result = String.new
-            result += "Книга"
 
             result += " #{authors_q} "
 
@@ -279,7 +280,6 @@ private
               end
 
               result = String.new
-              result += "Несколько авторов "
 
               result += "#{params[:title]} "
 
@@ -327,7 +327,6 @@ private
         unless params[:title].blank? || params[:city].blank? || params[:publisher].blank? ||  params[:year].blank? || params[:volume].blank?
 
                   result = String.new
-                  result += "Сборник статей"
 
                   result += " #{params[:title]}"
 
@@ -378,7 +377,6 @@ private
       unless params[:title].blank? || params[:volume_tome].blank? || params[:city].blank? ||  params[:publisher].blank? || params[:year].blank?
 
                   result = String.new
-                  result += "Многотомные издания"
 
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
@@ -468,7 +466,6 @@ private
             unless params[:title].blank? || params[:title_info].blank? ||  params[:city].blank? || params[:publisher].blank? || params[:year].blank? || params[:tome_number].blank?
 
                   result = String.new
-                  result += "Один том многотомного издания"
 
 
                           authors = params[:author].delete_if{ |e| e.blank? }
@@ -560,7 +557,6 @@ private
         unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:city].blank? ||  params[:year].blank? || params[:position].blank?
 
               result = String.new
-              result += "Статья из книги с 1—3 авторами"
 
               authors = params[:author].delete_if{ |e| e.blank? }
               authors.map! do |author|
@@ -646,7 +642,6 @@ private
           unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:city].blank? ||  params[:year].blank? || params[:position].blank?
 
                 result = String.new
-                result += "Статья из книги с 4 и более авторами"
 
                               authors = params[:author].delete_if{ |e| e.blank? }
                               authors.map! do |author|
@@ -731,7 +726,6 @@ private
             unless  params[:article_title].blank? || params[:title].blank? || params[:title_info].blank? || params[:city].blank? || params[:year].blank? || params[:tome_number].blank? || params[:position].blank?
 
                   result = String.new
-                  result += "Статья из собрания сочинений"
 
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
@@ -819,7 +813,6 @@ private
         unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:year].blank? || params[:tome_number].blank? || params[:position].blank? || params[:number].blank?
 
               result = String.new
-              result += "Статья из журнала"
 
               if (authors[0][2] == nil) then
                 authors_q = "#{authors[0][0]}, #{authors[0][1]}."
@@ -872,7 +865,6 @@ private
         unless params[:author].blank? || params[:article_title].blank? || params[:title].blank? || params[:year].blank? || params[:tome_number].blank? || params[:position].blank?
 
               result = String.new
-              result += "Статья из  газеты"
 
               if (authors[0][2] == nil) then
                 authors_q = "#{authors[0][0]}, #{authors[0][1]}."
@@ -935,7 +927,6 @@ private
             unless params[:article_title].blank? || params[:url].blank? || params[:accessing_resource].blank?
 
                   result = String.new
-                  result += "Электронный ресурс"
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
                     author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
