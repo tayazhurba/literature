@@ -123,14 +123,17 @@ end
 
     inner_vector = Vector.elements(inner_array)
 
-    puts '---'
     puts '############################'
     puts inner_vector
-    p "condidate"
-    p candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }
-    p "condidate end"
     candidate = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size }.first
-
+    p "mindef"
+    mindefvector = vectors.sort_by{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1 }.size}.first.second
+    mindef = (inner_vector - mindefvector).to_a.delete_if{ |x| x != -1 }.size
+    mindefvectors = vectors.to_a.delete_if{ |k,v| (inner_vector - v).to_a.delete_if{ |x| x != -1}.size > mindef}
+    p "minover"
+    candidate = mindefvectors.sort_by{ |k,v| (v - inner_vector).to_a.delete_if{ |x| x != -1 }.size}.first
+    p candidate
+    p "condidate end"
     result = nil
     case candidate[0]
       when :book_author_1to3
