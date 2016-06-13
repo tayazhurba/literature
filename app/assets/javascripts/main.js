@@ -28,12 +28,14 @@ $(document).ready(function() {
     check(myFields);
   })
 
-
   $('.selectpicker').change(function(){
     var id = $('.choose-type:selected').attr('id');
     typeChoose(id);
   })
 
+  $('body').on('click', '.save-record', function() {
+    saveRecord(myFields);
+  })
 
 })
 
@@ -53,7 +55,6 @@ function check(fields) {
       data[fields[i].attr('name')] = fields[i].val();
     }
   }
-
   console.log(data);
   var request = $.ajax({
     url: "/proc",
@@ -70,6 +71,12 @@ function check(fields) {
     // alert(msg['type'])
     // alert(msg['fields'])
     // alert(msg['result'])
+    if (!(msg['result'] == null)) {
+      $('#save-record-icon').addClass('save-record');
+    } else msg['result'] = "Здесь будет выведена библиографическая запись. Но мы не смогли определить тип источника. Пожалуйста, заполните ещё поля либо воспользуйтесь автоматически определёным типом."
+
+
+
     $( "#result" ).text(msg['result'])
     switch ( msg['type'] ) {
       case 'book_author_1to3':
@@ -122,6 +129,7 @@ function typeChoose(id) {
     method: "GET"
   });
   request.done(function( msg ) {
+    msg = JSON.parse(msg);
     generateFields(msg);
   });
   request.fail(function( jqXHR, textStatus ) {
@@ -129,19 +137,47 @@ function typeChoose(id) {
   });
 }
 
+function saveRecord(fields) {
+  var data = {};
+
+  for (var i=0; i<fields.length; i++) {
+    if (fields[i].attr('name')=='author[]'){
+      if (data[fields[i].attr('name')]) {
+        data[fields[i].attr('name')].push(fields[i].val());
+      } else {
+        data[fields[i].attr('name')] = [fields[i].val()];
+      }
+    } else {
+      data[fields[i].attr('name')] = fields[i].val();
+    }
+  }
+  console.log(data);
+  var request = $.ajax({
+    url: "/save_record/",
+    method: "POST",
+    data: {'fields': data}
+  });
+  request.done(function( msg ) {
+    alert(msg);
+  });
+  request.fail(function( jqXHR, textStatus ) {
+    alert( "Request failed: " + textStatus );
+  });
+}
+
+
 function generateFields(p) {
-  p = JSON.parse(p);
   // console.log(JSON.parse(p));
   // console.log(JSON.parse("[1, 2, 3]"));
   // console.log(Array.isArray(p))
-  alert(p);
-  alert(p.length);
+  // alert(p);
+  // alert(p.length);
   if (p[0] == 1 && !$('input[name="author[]"]').length) {
     $('#add_author').trigger('click');
   }
 
   for (var i=0; i<p.length; i++) {
-  alert(i+"p="+p[i]);
+  // alert(i+"p="+p[i]);
   // alert(p[i]);
     if (p[i] == 1) {
 

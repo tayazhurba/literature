@@ -11,19 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160521081130) do
+ActiveRecord::Schema.define(version: 20160613092928) do
 
-  create_table "autors", force: true do |t|
-    t.integer  "source_id"
-    t.string   "author_sur"
-    t.string   "author_name"
-    t.string   "author_last"
+  create_table "fields", force: true do |t|
+    t.integer  "record_id"
+    t.string   "name"
+    t.string   "value"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "lists", force: true do |t|
-    t.integer  "users_id"
+    t.integer  "user_id"
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -31,40 +30,13 @@ ActiveRecord::Schema.define(version: 20160521081130) do
 
   create_table "records", force: true do |t|
     t.integer  "list_id"
-    t.integer  "rec_type"
-    t.string   "record"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "sources", force: true do |t|
-    t.integer  "user_id"
-    t.string   "title"
-    t.integer  "year"
-    t.string   "publisher"
-    t.integer  "volume"
-    t.string   "city"
-    t.integer  "edition_number"
-    t.integer  "number"
-    t.string   "position"
-    t.string   "article_title"
-    t.string   "url"
-    t.date     "release_date"
-    t.date     "accessing_resource"
-    t.integer  "type_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "types", force: true do |t|
-    t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|
-    t.string   "first_name"
-    t.string   "last_name"
+    t.string   "name"
+    t.string   "surname"
     t.string   "email"
     t.string   "password"
     t.datetime "created_at"

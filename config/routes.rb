@@ -2,15 +2,17 @@ Rails.application.routes.draw do
   resources :lists
 
   resources :records
-
+  
+  root 'app#main'
   get 'users/new'
 
   get 'typeChoose/:t' => 'app#typeChoose'
+  post 'save_record' => 'app#save_record'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'app#main'
+
 
   # Example of regular route:
    post 'proc' => 'app#check'

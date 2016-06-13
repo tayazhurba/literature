@@ -10,6 +10,19 @@ class ListsController < ApplicationController
   # GET /lists/1
   # GET /lists/1.json
   def show
+    list = List.find_by(id: params[:id])
+    @records = list.records
+    p '11111111111111111111111111111111111111111111111111111111'
+    p list
+
+    @records.each do |r|
+      data = {}
+      r.fields.each do |f|
+        data[f.name] = f.value
+      end
+      app_controller = AppController.new
+      app_controller.check
+    end
   end
 
   # GET /lists/new
@@ -24,17 +37,9 @@ class ListsController < ApplicationController
   # POST /lists
   # POST /lists.json
   def create
-    @list = List.new(list_params)
-
-    respond_to do |format|
-      if @list.save
-        format.html { redirect_to @list, notice: 'List was successfully created.' }
-        format.json { render :show, status: :created, location: @list }
-      else
-        format.html { render :new }
-        format.json { render json: @list.errors, status: :unprocessable_entity }
-      end
-    end
+    p params
+    @user.lists.create(name: params[:name])
+    redirect_to lists_path
   end
 
   # PATCH/PUT /lists/1

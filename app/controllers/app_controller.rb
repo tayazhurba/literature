@@ -24,6 +24,20 @@ class AppController < ApplicationController
   # 18  Интернет-ресурс
   # 19  Дата выпуска
   # 20  Дата обращения
+def save_record
+  # p params
+  user = User.find_by(id: 1)
+  list = user.lists.find_by(name: "Общий список")
+  list = user.lists.create(name: "Общий список") unless list
+  record = list.records.create()
+  params[:fields].each do |f|
+    record.fields.create(name: f[0], value: f[1])
+  end
+  render text: "кнопочка с сервера пришла!!!"
+end
+
+
+
 
 def typeChoose
   # p $vectors[params[:t].to_sym]
@@ -35,7 +49,7 @@ def typeChoose
     when "book_author_from4"
       result = [0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0]
     when "digest"
-      result = [0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0]
+      result = [0,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0]
     when "tome"
       result = [0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0]
     when "tome_single"
@@ -88,7 +102,7 @@ end
     vectors = {
       book_author_1to3:   Vector[1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 1 to 3 autors
       book_author_from4:  Vector[0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # 3 > author
-      digest:             Vector[0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
+      digest:             Vector[0,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0], # digest
       tome:               Vector[0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0], # tome
       tome_single:        Vector[0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0], # tome_single
       book_article_1to3:  Vector[1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0], # book_article_1to3
@@ -166,7 +180,8 @@ end
       p "result="
       p result
     if (result == nil) then
-      result = "Здесь будет выведена библиографическая запись. Но мы не смогли определить тип источника. Пожалуйста, заполните ещё поля либо воспользуйтесь автоматически определёным типом."
+      # result = nil
+      # result = "Здесь будет выведена библиографическая запись. Но мы не смогли определить тип источника. Пожалуйста, заполните ещё поля либо воспользуйтесь автоматически определёным типом."
     end
     response = {
       type:   candidate[0],
@@ -935,13 +950,15 @@ private
             unless params[:article_title].blank? || params[:url].blank? || params[:accessing_resource].blank?
 
                   result = String.new
+
+
+                if !(params[:author].blank?) then
+
                   authors = params[:author].delete_if{ |e| e.blank? }
                   authors.map! do |author|
                     author = author.split(/[ \.]/).delete_if{ |e| e.blank? }
                     (Array(author[0]) << author[1..-1].map{ |e| e[0] }).flatten
                   end
-
-                if !(params[:author].blank?) then
 
                       if (authors[0][2] == nil) then
                           authors_q = "#{authors[0][0]}, #{authors[0][1]}."
