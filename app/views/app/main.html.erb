@@ -42,35 +42,23 @@
 </div>
 
 <div style="float:left; width: 30%; margin-top:50px;">
-  <div id="dropDown2" class="dropdown" style="margin:20px 0;">Хотите выбрать тип ссылки самостоятельно?<br>
-    <button id="tLabel" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top:20px;">Создать ссылку для
-    <span class="caret"></span></button>
-      <ul class="dropdown-menu" area-labelledby="tLabel">
-        <li class="choose-type" id="book_author_1to3"><a href="#">книги с 1-3 акторами</a></li>
-        <li class="choose-type" id="book_author_from4"><a href="#">книги с четырьмя и более авторами</a></li>
-        <li class="choose-type" id="digest"><a href="#">сборника</a></li>
-        <li class="choose-type" id="tome"><a href="#">многотомника</a></li>
-        <li class="choose-type" id="tome_single"><a href="#">отдельного тома многотомного издания</a></li>
-        <li class="choose-type" id="book_article_1to3"><a href="#">статьи из книги с 1-3 авторами</a></li>
-        <li class="choose-type" id="book_article_from4"><a href="#">статьи из книги с четырьмя и более авторами</a></li>
-        <li class="choose-type" id="digest_article"><a href="#">статьи из сборника</a></li>
-        <li class="choose-type" id="magazines_article"><a href="#">статьи из журнала</a></li>
-        <li class="choose-type" id="papers_article"><a href="#">статьи из газеты</a></li>
-        <li class="choose-type" id="internet_resourse"><a href="#">интернет ресурса</a></li>
-      </ul>
+  <div style="margin:20px 0;">Хотите выбрать тип ссылки самостоятельно?<br>
+    <!-- <button id="tLabel" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="margin-top:20px;">Создать ссылку для
+    <span class="caret"></span></button> -->
+      <select class="selectpicker" style="margin: 20px 0;">
+        <option class="choose-type" id="book_author_1to3"><a href="#">книга с 1-3 акторами</a></option>
+        <option class="choose-type" id="book_author_from4"><a href="#">книга с четырьмя и более авторами</a></option>
+        <option class="choose-type" id="digest"><a href="#">сборник</a></option>
+        <option class="choose-type" id="tome"><a href="#">многотомник</a></option>
+        <option class="choose-type" id="tome_single"><a href="#">отдельный том многотомного издания</a></option>
+        <option class="choose-type" id="book_article_1to3"><a href="#">статья из книги с 1-3 авторами</a></option>
+        <option class="choose-type" id="book_article_from4"><a href="#">статья из книги с четырьмя и более авторами</a></option>
+        <option class="choose-type" id="digest_article"><a href="#">статья из сборника</a></option>
+        <option class="choose-type" id="magazines_article"><a href="#">статья из журнала</a></option>
+        <option class="choose-type" id="papers_article"><a href="#">статья из газеты</a></option>
+        <option class="choose-type" id="internet_resourse"><a href="#">интернет-ресурс</a></option>
+      </select>
   </div>
 </div>
 
 </div>
-
-
-<!-- <div class="dropdown">
-  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown trigger
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="dLabel">
-    <li>wdwd</li>
-    <li>wdwd2</li>
-  </ul>
-</div> -->

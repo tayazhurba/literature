@@ -28,34 +28,36 @@ class AppController < ApplicationController
 def typeChoose
   # p $vectors[params[:t].to_sym]
   # render text: $vectors[params[:t].to_sym]
-  # case params[:t]
-  #   when "book_author_1to3"
-  #     result = $vectors[:book_author_1to3]
-  #     p result
-  #   when "book_author_from4"
-  #     result = $vectors[:book_author_from4]
-  #   when "digest"
-  #     result = $vectors[:digest]
-  #   when "tome"
-  #     result = $vectors[:tome]
-  #   when "tome_single"
-  #     result = $vectors[:tome_single]
-  #   when "book_article_1to3"
-  #     result = $vectors[:book_article_1to3]
-  #   when "book_article_from4"
-  #     result = $vectors[:book_article_from4]
-  #   when "magazines_article"
-  #     result = $vectors[:magazines_article]
-  #   when "papers_article"
-  #     result = $vectors[:papers_article]
-  #   when "internet_resourse"
-  #     result = $vectors[:internet_resourse]
-  #   else
-  #     p 'type not found'
-  #   end
-  # p "============="
-  # p result
-  # render text: result
+  p params[:t]
+  case params[:t]
+    when "book_author_1to3"
+      result = [1,0,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0]
+    when "book_author_from4"
+      result = [0,1,1,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0]
+    when "digest"
+      result = [0,0,0,0,0,0,0,1,1,1,0,0,1,0,0,0,0,0,0,0]
+    when "tome"
+      result = [0,0,1,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0]
+    when "tome_single"
+      result = [0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0]
+    when "book_article_1to3"
+      result = [1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0]
+    when "book_article_from4"
+      result = [0,1,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,0,0,0]
+    when "digest_article"
+      result = [0,0,1,1,0,0,0,1,0,0,0,1,1,0,0,1,1,0,0,0]
+    when "magazines_article"
+      result = [1,0,1,0,0,0,0,1,0,0,0,1,0,0,1,1,1,0,0,0]
+    when "papers_article"
+      result = [1,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,1,0,0,0]
+    when "internet_resourse"
+      result = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1]
+    else
+      p 'type not found'
+    end
+  p "============="
+  p result
+  render text: result
 end
 
   def check
@@ -150,6 +152,8 @@ end
         result = book_article_1to3
       when :book_article_from4
         result = book_article_from4
+      when :digest_article
+        result = digest_article
       when :magazines_article
         result = magazines_article
       when :papers_article
@@ -169,6 +173,7 @@ end
       fields: candidate[1].to_a,
       result: result
      }
+    #  p candidate[1].to_a
 
     render json: response
 

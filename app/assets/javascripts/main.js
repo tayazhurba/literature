@@ -29,8 +29,8 @@ $(document).ready(function() {
   })
 
 
-  $('.choose-type').click(function(){
-    var id = $(this).attr('id');
+  $('.selectpicker').change(function(){
+    var id = $('.choose-type:selected').attr('id');
     typeChoose(id);
   })
 
@@ -62,7 +62,6 @@ function check(fields) {
   });
 
   request.done(function( msg ) {
-    // console.log(msg)
     sentence.unbind();
     sentence.click(function() {
       generateFields(msg.fields);
@@ -110,7 +109,6 @@ function check(fields) {
       default:
         alert('default ' + msg['fields'])
     }
-
   });
 
   request.fail(function( jqXHR, textStatus ) {
@@ -123,16 +121,30 @@ function typeChoose(id) {
     url: "/typeChoose/" + id,
     method: "GET"
   });
+  request.done(function( msg ) {
+    generateFields(msg);
+  });
+  request.fail(function( jqXHR, textStatus ) {
+    alert( "Request failed: " + textStatus );
+  });
 }
 
-
 function generateFields(p) {
+  p = JSON.parse(p);
+  // console.log(JSON.parse(p));
+  // console.log(JSON.parse("[1, 2, 3]"));
+  // console.log(Array.isArray(p))
+  alert(p);
+  alert(p.length);
   if (p[0] == 1 && !$('input[name="author[]"]').length) {
     $('#add_author').trigger('click');
   }
 
-  for (var i=2; i<p.length; i++) {
+  for (var i=0; i<p.length; i++) {
+  alert(i+"p="+p[i]);
+  // alert(p[i]);
     if (p[i] == 1) {
+
       var $addField = $($('.add-field')[i-1]);
       if (!$addField.hasClass('added')) {
         $addField.trigger('click');
